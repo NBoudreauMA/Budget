@@ -30,16 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    // FAQ Toggle Animation
-    document.querySelectorAll(".faq-item h3").forEach((question) => {
-        question.addEventListener("click", () => {
-            const answer = question.nextElementSibling;
-            answer.classList.toggle("faq-answer");
-            answer.style.display = answer.style.display === "block" ? "none" : "block";
-            question.classList.toggle("active");
-        });
-    });
-
     // Intersection Observer for Scroll Animations
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
