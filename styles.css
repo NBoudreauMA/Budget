@@ -1,25 +1,30 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background: linear-gradient(to right, #f4f4f4, #e0e0e0);
     color: #333;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background 0.3s, color 0.3s;
 }
 
 /* Dark Mode */
 .dark-mode {
-    background-color: #121212;
+    background: linear-gradient(to right, #121212, #1e1e1e);
     color: #fff;
 }
 
+/* Header */
 header {
-    background-color: #2E7D32;
+    background: rgba(46, 125, 50, 0.9);
     color: white;
     text-align: center;
     padding: 20px;
-    position: relative;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    transition: background 0.3s;
 }
 
 nav ul {
@@ -37,8 +42,14 @@ nav ul li a {
     color: white;
     text-decoration: none;
     font-weight: bold;
+    transition: color 0.3s;
 }
 
+nav ul li a:hover {
+    color: #FFC107;
+}
+
+/* Dark Mode Toggle */
 #darkModeToggle {
     position: absolute;
     top: 10px;
@@ -47,21 +58,34 @@ nav ul li a {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 50%;
+    font-size: 1.2em;
 }
 
 /* Hero Section */
 .hero {
-    background: url('https://source.unsplash.com/1600x900/?forest,green') no-repeat center center/cover;
+    background: url('https://source.unsplash.com/1600x900/?nature,green') no-repeat center center/cover;
     color: white;
     text-align: center;
-    padding: 80px 20px;
+    padding: 100px 20px;
+    font-size: 1.5em;
+    transition: all 0.3s ease;
+}
+
+.hero h2 {
+    font-size: 2.5em;
+    margin: 0;
+    animation: fadeIn 1s ease-in-out;
 }
 
 /* Budget Highlights */
 .highlights {
     text-align: center;
     padding: 40px 20px;
+}
+
+.highlights h2 {
+    color: #2E7D32;
 }
 
 .grid {
@@ -72,21 +96,18 @@ nav ul li a {
 }
 
 .card {
-    background: white;
+    background: rgba(255, 255, 255, 0.7);
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 250px;
+    width: 280px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease-in-out;
 }
 
-/* FAQ */
-.faq-item h3 {
-    cursor: pointer;
-}
-
-.faq-answer {
-    display: none;
+.card:hover {
+    transform: scale(1.05);
 }
 
 /* Back to Top Button */
@@ -96,16 +117,30 @@ nav ul li a {
     right: 20px;
     background: #2E7D32;
     color: white;
-    padding: 10px;
-    border-radius: 5px;
-    display: none;
+    padding: 12px;
+    border-radius: 50%;
+    font-size: 1.2em;
     cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
 }
 
+#backToTop:hover {
+    background: #1B5E20;
+}
+
+/* Footer */
 footer {
-    background-color: #222;
+    background: rgba(34, 34, 34, 0.9);
     color: white;
     text-align: center;
-    padding: 10px;
+    padding: 20px;
     position: relative;
+    backdrop-filter: blur(5px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
