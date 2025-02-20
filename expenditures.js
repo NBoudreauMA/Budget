@@ -2,10 +2,10 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ Expenditures script loaded.");
 
     const expenditureContainer = document.getElementById("expenditureContainer");
-    if (!expenditureContainer) {
-        console.error("❌ No container found for expenditures.");
-        return;
-    }
+    const searchBox = document.createElement("input");
+    searchBox.id = "searchBox";
+    searchBox.setAttribute("placeholder", "🔍 Search by department or item...");
+    expenditureContainer.before(searchBox);
 
     fetch("expenditures_cleaned.csv")
         .then(response => response.text())
@@ -48,9 +48,11 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
 
         data.forEach(row => {
+            const categoryClass = `category-${(row["Category"] || "OTHER").replace(/\s+/g, "-").toUpperCase()}`;
+
             tableHTML += `
                 <tr>
-                    <td>${row["Category"] || "-"}</td>
+                    <td><span class="category-label ${categoryClass}">${row["Category"] || "-"}</span></td>
                     <td>${row["Item Description"] || "-"}</td>
                     <td>${row["Account Number"] || "-"}</td>
                     <td>${row["FY24 ACTUAL"] || "-"}</td>
@@ -68,5 +70,14 @@ document.addEventListener("DOMContentLoaded", function () {
         expenditureContainer.innerHTML = tableHTML;
 
         console.log("✅ Table Rendered Successfully");
+
+        // Search Functionality
+        searchBox.addEventListener("input", function () {
+            const searchValue = searchBox.value.toLowerCase();
+            document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(searchValue) ? "" : "none";
+            });
+        });
     }
 });
