@@ -1,92 +1,215 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expenditures | Hubbardston Budget</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="expenditures.js" defer></script>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="index.html">
-                    <img src="hubbardston_logo.png" alt="Town of Hubbardston">
-                </a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="revenue.html">Revenue</a></li>
-                <li><a href="expenditures.html" class="active">Expenditures</a></li>
-                <li><a href="information.html">Information</a></li>
-                <li class="dropdown">
-                    <a href="#">Departments ▼</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#GeneralGovernment">General Government</a></li>
-                        <li><a href="#PublicSafety">Public Safety</a></li>
-                        <li><a href="#PublicWorks">Public Works</a></li>
-                        <li><a href="#Education">Education</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <div class="hamburger-menu">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </div>
-    </nav>
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Expenditures script loaded.");
 
-    <main class="main-content">
-        <h1 class="text-center mb-2">Town Expenditures</h1>
+    // Mobile menu functionality
+    const hamburger = document.querySelector('.hamburger-menu');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
 
-        <div class="chart-container">
-            <canvas id="expenditureChart"></canvas>
-        </div>
+    // Get filter elements
+    const yearFilter = document.getElementById('yearFilter');
+    const departmentFilter = document.getElementById('departmentFilter');
+    let globalData = null;
 
-        <section id="grandTotal" class="text-center mb-2"></section>
+    // Load CSV file
+    Papa.parse("expenditures_cleaned.csv", {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function (results) {
+            console.log("Expenditures CSV Loaded:", results.data);
+            globalData = results.data;
+            processAndDisplayData();
 
-        <div class="expenditure-sections">
-            <!-- Make sure these IDs match exactly with your CSV categories -->
-            <section id="GeneralGovernment" class="department-section">
-                <h2>General Government</h2>
-            </section>
+            // Add filter event listeners
+            yearFilter.addEventListener('change', processAndDisplayData);
+            departmentFilter.addEventListener('change', processAndDisplayData);
+        }
+    });
 
-            <section id="PublicSafety" class="department-section">
-                <h2>Public Safety</h2>
-            </section>
+    function processAndDisplayData() {
+        const selectedYear = yearFilter.value;
+        const selectedDept = departmentFilter.value;
+        
+        // Get column name for selected year
+        const yearColumn = {
+            'FY26': 'FY26 ADMIN',
+            'FY25': 'FY25 BUDGET',
+            'FY24': 'FY24 ACTUAL',
+            'FY23': 'FY23 ACTUAL'
+        }[selectedYear];
 
-            <section id="PublicWorks" class="department-section">
-                <h2>Public Works</h2>
-            </section>
+        let categoryTotals = {};
+        let departmentData = {};
 
-            <section id="Education" class="department-section">
-                <h2>Education</h2>
-            </section>
+        // Process data
+        globalData.forEach(row => {
+            if (!row.Category || !row[yearColumn]) return;
 
-            <section id="HumanServices" class="department-section">
-                <h2>Human Services</h2>
-            </section>
+            const category = row.Category.trim();
+            const department = row.Department?.trim() || 'Uncategorized';
+            const amount = parseFloat(row[yearColumn]) || 0;
 
-            <section id="CultureandRecreation" class="department-section">
-                <h2>Culture and Recreation</h2>
-            </section>
+            // Skip if filtering by department and doesn't match
+            if (selectedDept !== 'all' && category.replace(/\s+/g, '') !== selectedDept) {
+                return;
+            }
 
-            <section id="DebtService" class="department-section">
-                <h2>Debt Service</h2>
-            </section>
+            // Aggregate totals
+            if (!categoryTotals[category]) {
+                categoryTotals[category] = 0;
+            }
+            categoryTotals[category] += amount;
 
-            <section id="Unclassified" class="department-section">
-                <h2>Other Expenses</h2>
-            </section>
-        </div>
-    </main>
+            // Store department data
+            if (!departmentData[category]) {
+                departmentData[category] = [];
+            }
+            departmentData[category].push({
+                department: department,
+                amount: amount,
+                fy23: parseFloat(row["FY23 ACTUAL"]) || 0,
+                fy24: parseFloat(row["FY24 ACTUAL"]) || 0,
+                fy25: parseFloat(row["FY25 BUDGET"]) || 0,
+                fy26: parseFloat(row["FY26 ADMIN"]) || 0
+            });
+        });
 
-    <footer>
-        <p>&copy; 2025 Town of Hubbardston</p>
-    </footer>
-</body>
-</html>
+        // Update visualizations
+        renderExpenditureChart(categoryTotals);
+        renderDepartmentTables(departmentData, yearColumn);
+
+        // Update visibility based on filter
+        document.querySelectorAll('.department-section').forEach(section => {
+            if (selectedDept === 'all' || section.id === selectedDept) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+    }
+
+    function renderExpenditureChart(categoryTotals) {
+        const ctx = document.getElementById("expenditureChart").getContext("2d");
+        const totalExpenditure = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
+
+        // Update grand total
+        document.getElementById('grandTotal').innerHTML = 
+            `<h3>Total Budget: ${formatCurrency(totalExpenditure)}</h3>`;
+
+        // Destroy existing chart if it exists
+        if (window.expenditureChart) {
+            window.expenditureChart.destroy();
+        }
+
+        window.expenditureChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: Object.keys(categoryTotals),
+                datasets: [{
+                    data: Object.values(categoryTotals),
+                    backgroundColor: [
+                        "#4CAF50", "#2196F3", "#FFC107", "#9C27B0", 
+                        "#FF5722", "#607D8B", "#795548", "#E91E63"
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: "bottom"
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw;
+                                const percentage = ((value / totalExpenditure) * 100).toFixed(1);
+                                return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderDepartmentTables(departmentData, yearColumn) {
+        Object.entries(departmentData).forEach(([category, departments]) => {
+            const sectionId = category.replace(/\s+/g, "");
+            const section = document.getElementById(sectionId);
+            
+            if (!section) {
+                console.warn(`No section found for category: ${category}`);
+                return;
+            }
+
+            // Clear existing table
+            const existingTable = section.querySelector('table');
+            if (existingTable) {
+                existingTable.remove();
+            }
+
+            // Create new table
+            const table = document.createElement("table");
+            table.className = "data-table";
+
+            // Add header
+            const thead = document.createElement("thead");
+            thead.innerHTML = `
+                <tr>
+                    <th>Department</th>
+                    <th>Amount</th>
+                    <th>% of Category</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            // Add body
+            const tbody = document.createElement("tbody");
+            const categoryTotal = departments.reduce((sum, dept) => sum + dept.amount, 0);
+
+            // Sort departments by amount
+            departments.sort((a, b) => b.amount - a.amount);
+
+            departments.forEach(dept => {
+                const percentOfCategory = ((dept.amount / categoryTotal) * 100).toFixed(1);
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${dept.department}</td>
+                    <td>${formatCurrency(dept.amount)}</td>
+                    <td>${percentOfCategory}%</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Add total row
+            const totalRow = document.createElement("tr");
+            totalRow.className = "category-total";
+            totalRow.innerHTML = `
+                <td><strong>Total</strong></td>
+                <td><strong>${formatCurrency(categoryTotal)}</strong></td>
+                <td><strong>100%</strong></td>
+            `;
+            tbody.appendChild(totalRow);
+
+            table.appendChild(tbody);
+            section.appendChild(table);
+        });
+    }
+});
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount);
+}
