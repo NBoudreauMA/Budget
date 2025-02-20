@@ -40,11 +40,11 @@
 
         <!-- Tax Levy Revenue -->
         <section class="dropdown-container">
-            <button class="dropdown-toggle">Tax Levy Revenue</button>
+            <button class="dropdown-toggle">Tax Levy Revenue <span class="info-icon" title="The total amount of property tax the town can legally raise each year.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="taxLevyTable">
                     <thead>
-                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
+                        <tr><th>Account <span class="info-icon" title="A category for different sources of revenue the town receives.">ℹ️</span></th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -53,7 +53,7 @@
 
         <!-- State Aid Revenue -->
         <section class="dropdown-container">
-            <button class="dropdown-toggle">State Aid Revenue</button>
+            <button class="dropdown-toggle">State Aid Revenue <span class="info-icon" title="Funds provided by the state to support local government operations.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="stateAidTable">
                     <thead>
@@ -66,7 +66,7 @@
 
         <!-- Local Receipts Revenue -->
         <section class="dropdown-container">
-            <button class="dropdown-toggle">Local Receipts Revenue</button>
+            <button class="dropdown-toggle">Local Receipts Revenue <span class="info-icon" title="Revenue from fees, permits, fines, and local services.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="localReceiptsTable">
                     <thead>
@@ -81,96 +81,5 @@
     <footer>
         <p>&copy; <span id="yearFooter"></span> Town of Hubbardston</p>
     </footer>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
-
-            // Fetch and Parse CSV
-            Papa.parse(revenueCSV, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function (results) {
-                    if (!results.data || results.data.length === 0) {
-                        console.error("CSV is empty or failed to load.");
-                        return;
-                    }
-
-                    let taxLevyTable = document.querySelector("#taxLevyTable tbody");
-                    let stateAidTable = document.querySelector("#stateAidTable tbody");
-                    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
-
-                    let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
-
-                    function formatCurrency(value) {
-                        let num = parseFloat(value);
-                        return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                    }
-
-                    results.data.forEach(row => {
-                        if (!row["Account"]) return; // Skip empty rows
-                        
-                        let rowHTML = `
-                            <tr>
-                                <td>${row["Account"]}</td>
-                                <td>${formatCurrency(row["FY23 Actual"])}</td>
-                                <td>${formatCurrency(row["FY24 Actual"])}</td>
-                                <td>${formatCurrency(row["FY25 Budget"])}</td>
-                                <td>${formatCurrency(row["FY26 Proposed"])}</td>
-                            </tr>
-                        `;
-
-                        let fy26Value = parseFloat(row["FY26 Proposed"]) || 0;
-
-                        if (["Tax Levy", "Prop 2.5%", "New Growth / Amended NG", "Debt Exclusions (School Roof)"].includes(row["Account"])) {
-                            taxLevyTable.innerHTML += rowHTML;
-                            taxTotal += fy26Value;
-                        } else if (["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets (Library)"].includes(row["Account"])) {
-                            stateAidTable.innerHTML += rowHTML;
-                            stateAidTotal += fy26Value;
-                        } else {
-                            localReceiptsTable.innerHTML += rowHTML;
-                            localReceiptsTotal += fy26Value;
-                        }
-                    });
-
-                    // Generate Pie Chart
-                    const ctx = document.getElementById("revenueChart").getContext("2d");
-                    new Chart(ctx, {
-                        type: "doughnut",
-                        data: {
-                            labels: ["Tax Levy", "State Aid", "Local Receipts"],
-                            datasets: [{
-                                data: [taxTotal, stateAidTotal, localReceiptsTotal],
-                                backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
-                                hoverOffset: 6
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: "bottom" },
-                                tooltip: { enabled: true }
-                            }
-                        }
-                    });
-                },
-                error: function (err) {
-                    console.error("Error loading CSV:", err);
-                }
-            });
-
-            // Fix Dropdown Toggle Functionality
-            document.querySelectorAll(".dropdown-toggle").forEach(button => {
-                button.addEventListener("click", function () {
-                    let content = this.nextElementSibling;
-                    content.style.display = content.style.display === "block" ? "none" : "block";
-                });
-            });
-        });
-    </script>
-
 </body>
 </html>
