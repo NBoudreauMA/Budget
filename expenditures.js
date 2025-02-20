@@ -13,26 +13,27 @@ document.addEventListener("DOMContentLoaded", function () {
             let departmentTotals = {};
             let categoryData = {};
 
-            // Aggregate expenditures by department (subcategories)
+            // Aggregate expenditures by department
             data.forEach(row => {
-                let category = row["Category"]?.trim();  // Main category
-                let department = row["Item Description"]?.trim();  // Department names for pie chart
+                let department = row["Category"]?.trim();  // Main department (General Government, Public Safety, etc.)
                 let amount = parseFloat(row["FY26 ADMIN"].replace(/[$,]/g, '')) || 0; // Remove $ and commas
 
-                // Skip if there's no valid amount
                 if (!department || isNaN(amount) || amount <= 0) return;
 
-                // Store department-wise totals for pie chart
+                // Store department totals for pie chart
                 if (!departmentTotals[department]) {
                     departmentTotals[department] = 0;
                 }
                 departmentTotals[department] += amount;
 
-                // Store department-wise data under categories for tables
-                if (!categoryData[category]) {
-                    categoryData[category] = [];
+                // Store details for table rendering
+                if (!categoryData[department]) {
+                    categoryData[department] = [];
                 }
-                categoryData[category].push({ department, amount });
+                categoryData[department].push({
+                    description: row["Item Description"],
+                    amount: amount
+                });
             });
 
             // Render the pie chart using department totals
@@ -44,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// 📌 Render pie chart for departments
+// 📌 Render pie chart for **departments** instead of every line item
 function renderExpenditureChart(departmentTotals) {
     let ctx = document.getElementById("expenditureChart")?.getContext("2d");
     if (!ctx) {
@@ -67,7 +68,7 @@ function renderExpenditureChart(departmentTotals) {
             datasets: [{
                 data: values,
                 backgroundColor: [
-                    "#4CAF50", "#FF9800", "#F44336", "#3F51B5", "#9C27B0", "#009688", "#FFC107", "#E91E63"
+                    "#4CAF50", "#FF9800", "#F44336", "#3F51B5", "#9C27B0", "#009688", "#FFC107", "#E91E63", "#795548"
                 ],
             }]
         },
@@ -82,13 +83,14 @@ function renderExpenditureChart(departmentTotals) {
     console.log("Expenditure Chart Rendered Successfully");
 }
 
-// 📌 Render tables for each category
+// 📌 Render tables for each **main category**
 function renderExpenditureTables(categoryData) {
     Object.keys(categoryData).forEach(category => {
-        let sectionId = category.replace(/\s+/g, "");
-        let section = document.getElementById(sectionId);
+        let cleanCategory = category.replace(/\s+/g, "-"); // Remove spaces for ID matching
+        let section = document.getElementById(cleanCategory);
+        
         if (!section) {
-            console.warn(`No section found for category: ${category} (ID: ${sectionId})`);
+            console.warn(`No section found for category: ${category} (ID: ${cleanCategory})`);
             return;
         }
 
@@ -100,9 +102,9 @@ function renderExpenditureTables(categoryData) {
         table.appendChild(thead);
 
         let tbody = document.createElement("tbody");
-        categoryData[category].forEach(({ department, amount }) => {
+        categoryData[category].forEach(({ description, amount }) => {
             let row = document.createElement("tr");
-            row.innerHTML = `<td>${department}</td><td>$${amount.toLocaleString()}</td>`;
+            row.innerHTML = `<td>${description}</td><td>$${amount.toLocaleString()}</td>`;
             tbody.appendChild(row);
         });
 
