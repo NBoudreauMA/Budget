@@ -12,6 +12,120 @@
     
     <!-- Main Revenue Script -->
     <script src="revenue.js" defer></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            padding: 1rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        nav ul li {
+            display: inline;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            transition: 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+        
+        .dropdown-container {
+            margin: 10px auto;
+            max-width: 800px;
+        }
+        
+        .dropdown-toggle {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            border: none;
+            color: white;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .dropdown-toggle:hover {
+            background: #1e7e34;
+        }
+        
+        .dropdown-content {
+            display: none;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        
+        .dropdown-container.active .dropdown-content {
+            display: block;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        
+        th {
+            background: #28a745;
+            color: white;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -30,15 +144,11 @@
         <h2>Revenue Overview</h2>
         <p>A detailed breakdown of the Town of Hubbardston’s revenue sources.</p>
 
-        <!-- Modern Pie Chart -->
         <section class="chart-container">
             <h3>Revenue Distribution (FY26)</h3>
-            <div class="chart-wrapper">
-                <canvas id="revenueChart"></canvas>
-            </div>
+            <canvas id="revenueChart"></canvas>
         </section>
 
-        <!-- Revenue Breakdown Tables -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Tax Levy <span class="info-icon" title="Revenue raised through property taxes.">ℹ️</span></button>
             <div class="dropdown-content">
@@ -52,43 +162,25 @@
                             <th>FY26 Proposed</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="dropdown-container">
-            <button class="dropdown-toggle">State Aid <span class="info-icon" title="Funding provided by the state for various programs.">ℹ️</span></button>
-            <div class="dropdown-content">
-                <table id="stateAidTable">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>FY23</th>
-                            <th>FY24</th>
-                            <th>FY25</th>
-                            <th>FY26</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="dropdown-container">
-            <button class="dropdown-toggle">Local Receipts <span class="info-icon" title="Revenue from local sources such as motor vehicle excise, fees, and fines.">ℹ️</span></button>
-            <div class="dropdown-content">
-                <table id="localReceiptsTable">
-                    <thead>
-                        <tr>
-                            <th>Category</th>
-                            <th>FY23 Actual</th>
-                            <th>FY24 Actual</th>
-                            <th>FY25 Budget</th>
-                            <th>FY26 Proposed</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        <script>
+                            fetch('revenue.csv')
+                                .then(response => response.text())
+                                .then(csv => {
+                                    const data = Papa.parse(csv, { header: true }).data;
+                                    const tableBody = document.querySelector('#taxLevyTable tbody');
+                                    data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `<td>${row.Category}</td>
+                                                        <td>${row.FY23}</td>
+                                                        <td>${row.FY24}</td>
+                                                        <td>${row.FY25}</td>
+                                                        <td>${row.FY26}</td>`;
+                                        tableBody.appendChild(tr);
+                                    });
+                                });
+                        </script>
+                    </tbody>
                 </table>
             </div>
         </section>
