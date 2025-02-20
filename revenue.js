@@ -8,13 +8,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    let taxLevyTable = document.querySelector("#taxLevyTable tbody");
-    let stateAidTable = document.querySelector("#stateAidTable tbody");
-    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
+    let revenueTables = {
+        "Tax Levy": document.querySelector("#taxLevyTable tbody"),
+        "State Aid": document.querySelector("#stateAidTable tbody"),
+        "Local Receipts": document.querySelector("#localReceiptsTable tbody")
+    };
+
     let revenueChartCanvas = document.getElementById("revenueChart");
 
-    if (!taxLevyTable || !stateAidTable || !localReceiptsTable || !revenueChartCanvas) {
-        console.error("One or more revenue tables are missing in revenue.html.");
+    if (!revenueChartCanvas) {
+        console.error("Revenue chart canvas missing.");
         return;
     }
 
@@ -58,13 +61,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
                 if (row["Account"].includes("Tax Levy")) {
-                    taxLevyTable.innerHTML += rowHTML;
+                    revenueTables["Tax Levy"].innerHTML += rowHTML;
                     revenueCategories["Tax Levy"] += fy26Value;
                 } else if (row["Account"].includes("State Aid")) {
-                    stateAidTable.innerHTML += rowHTML;
+                    revenueTables["State Aid"].innerHTML += rowHTML;
                     revenueCategories["State Aid"] += fy26Value;
                 } else {
-                    localReceiptsTable.innerHTML += rowHTML;
+                    revenueTables["Local Receipts"].innerHTML += rowHTML;
                     revenueCategories["Local Receipts"] += fy26Value;
                 }
             });
@@ -74,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (isNaN(revenueCategories[key])) revenueCategories[key] = 0;
             });
 
-            // Generate Chart with Fixed Size
+            // Generate Chart
             const ctx = revenueChartCanvas.getContext("2d");
             new Chart(ctx, {
                 type: "pie",
@@ -90,12 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     responsive: true,
                     maintainAspectRatio: false,
                     layout: {
-                        padding: {
-                            left: 10,
-                            right: 10,
-                            top: 10,
-                            bottom: 10
-                        }
+                        padding: 10
                     },
                     plugins: {
                         legend: { position: "bottom" },
@@ -106,5 +104,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("Revenue Chart Rendered Successfully");
         }
+    });
+
+    // Collapsible Dropdown Logic
+    document.querySelectorAll(".dropdown-toggle").forEach(button => {
+        button.addEventListener("click", function () {
+            this.nextElementSibling.classList.toggle("active");
+        });
     });
 });
