@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let stateAidItems = ["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets"];
             
             results.data.forEach(row => {
-                if (!row["Account"]) return;
+                if (!row["Account"] || row["Account"].toLowerCase().includes("subtotal") || row["Account"].toLowerCase().includes("gross revenues")) return;
 
                 let fy26Value = parseFloat(row["FY26 Proposed"].replace(/[$,]/g, "")) || 0;
 
@@ -76,13 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            // Add subtotal rows
-            Object.keys(revenueCategories).forEach(category => {
-                let subtotalRow = `<tr class="subtotal"><td colspan="4"><strong>Subtotal</strong></td><td><strong>${formatCurrency(revenueCategories[category])}</strong></td></tr>`;
-                revenueSections[category].innerHTML += subtotalRow;
-            });
-
-            // Calculate grand total
+            // Calculate grand total only in JavaScript
             let grandTotal = Object.values(revenueCategories).reduce((acc, val) => acc + val, 0);
             grandTotalContainer.innerHTML = `<h3>Gross Revenues: ${formatCurrency(grandTotal)}</h3>`;
 
