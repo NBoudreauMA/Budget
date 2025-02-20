@@ -2,10 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("✅ Expenditures script loaded.");
 
     const expenditureContainer = document.getElementById("expenditureContainer");
-    const searchBox = document.createElement("input");
-    searchBox.id = "searchBox";
-    searchBox.setAttribute("placeholder", "🔍 Search by department or item...");
-    expenditureContainer.before(searchBox);
+
+    // Create department dropdown
+    const departmentDropdown = document.createElement("select");
+    departmentDropdown.id = "departmentDropdown";
+    departmentDropdown.innerHTML = `<option value="all">📋 Select Department</option>`;
+    expenditureContainer.before(departmentDropdown);
 
     fetch("expenditures_cleaned.csv")
         .then(response => response.text())
@@ -16,10 +18,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 complete: function (results) {
                     console.log("✅ Expenditures CSV Loaded:", results.data);
                     renderExpenditureTable(results.data);
+                    populateDepartmentDropdown(results.data);
                 }
             });
         })
         .catch(error => console.error("❌ Error loading CSV:", error));
+
+    function populateDepartmentDropdown(data) {
+        let departments = new Set();
+        data.forEach(row => {
+            if (row["Category"]) departments.add(row["Category"]);
+        });
+
+        departments.forEach(dept => {
+            let option = document.createElement("option");
+            option.value = dept;
+            option.textContent = dept;
+            departmentDropdown.appendChild(option);
+        });
+
+        departmentDropdown.addEventListener("change", function () {
+            filterTableByDepartment(departmentDropdown.value);
+        });
+    }
 
     function renderExpenditureTable(data) {
         if (!data.length) {
@@ -51,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const categoryClass = `category-${(row["Category"] || "OTHER").replace(/\s+/g, "-").toUpperCase()}`;
 
             tableHTML += `
-                <tr>
+                <tr data-category="${row["Category"]}">
                     <td><span class="category-label ${categoryClass}">${row["Category"] || "-"}</span></td>
                     <td>${row["Item Description"] || "-"}</td>
                     <td>${row["Account Number"] || "-"}</td>
@@ -70,14 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
         expenditureContainer.innerHTML = tableHTML;
 
         console.log("✅ Table Rendered Successfully");
+    }
 
-        // Search Functionality
-        searchBox.addEventListener("input", function () {
-            const searchValue = searchBox.value.toLowerCase();
-            document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(searchValue) ? "" : "none";
-            });
+    function filterTableByDepartment(department) {
+        document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
+            const category = row.getAttribute("data-category");
+            row.style.display = department === "all" || category === department ? "" : "none";
         });
     }
 });
