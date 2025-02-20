@@ -10,34 +10,22 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Expenditures CSV Loaded:", results.data);
 
             let data = results.data;
-            let departmentTotals = {};
             let categoryData = {};
 
-            // Aggregate expenditures by department
+            // Organize expenditures by department
             data.forEach(row => {
                 let department = row["Category"]?.trim();  // Main department (General Government, Public Safety, etc.)
+                let item = row["Item Description"]?.trim();
                 let amount = parseFloat(row["FY26 ADMIN"].replace(/[$,]/g, '')) || 0; // Remove $ and commas
 
-                if (!department || isNaN(amount) || amount <= 0) return;
-
-                // Store department totals for pie chart
-                if (!departmentTotals[department]) {
-                    departmentTotals[department] = 0;
-                }
-                departmentTotals[department] += amount;
+                if (!department || !item || isNaN(amount) || amount <= 0) return;
 
                 // Store details for table rendering
                 if (!categoryData[department]) {
                     categoryData[department] = [];
                 }
-                categoryData[department].push({
-                    description: row["Item Description"],
-                    amount: amount
-                });
+                categoryData[department].push({ item, amount });
             });
-
-            // Render the pie chart using department totals
-            renderExpenditureChart(departmentTotals);
 
             // Render tables for each major category
             renderExpenditureTables(categoryData);
@@ -45,71 +33,40 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// 📌 Render pie chart for **departments** instead of every line item
-function renderExpenditureChart(departmentTotals) {
-    let ctx = document.getElementById("expenditureChart")?.getContext("2d");
-    if (!ctx) {
-        console.warn("No canvas found for pie chart.");
-        return;
-    }
-
-    let departments = Object.keys(departmentTotals);
-    let values = Object.values(departmentTotals);
-
-    if (departments.length === 0) {
-        console.warn("No departments found for pie chart.");
-        return;
-    }
-
-    new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: departments,
-            datasets: [{
-                data: values,
-                backgroundColor: [
-                    "#4CAF50", "#FF9800", "#F44336", "#3F51B5", "#9C27B0", "#009688", "#FFC107", "#E91E63", "#795548"
-                ],
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: "bottom" }
-            }
-        }
-    });
-
-    console.log("Expenditure Chart Rendered Successfully");
-}
-
 // 📌 Render tables for each **main category**
 function renderExpenditureTables(categoryData) {
+    let container = document.getElementById("expenditureContainer");
+    if (!container) {
+        console.warn("No container found for expenditures.");
+        return;
+    }
+    container.innerHTML = ""; // Clear previous content
+
     Object.keys(categoryData).forEach(category => {
-        let cleanCategory = category.replace(/\s+/g, "-"); // Remove spaces for ID matching
-        let section = document.getElementById(cleanCategory);
+        let section = document.createElement("div");
+        section.className = "expenditure-section";
         
-        if (!section) {
-            console.warn(`No section found for category: ${category} (ID: ${cleanCategory})`);
-            return;
-        }
+        let title = document.createElement("h2");
+        title.textContent = category;
+        section.appendChild(title);
 
         let table = document.createElement("table");
         table.className = "styled-table";
 
         let thead = document.createElement("thead");
-        thead.innerHTML = `<tr><th>Department</th><th>FY26 ADMIN</th></tr>`;
+        thead.innerHTML = `<tr><th>Expenditure Item</th><th>Amount ($)</th></tr>`;
         table.appendChild(thead);
 
         let tbody = document.createElement("tbody");
-        categoryData[category].forEach(({ description, amount }) => {
+        categoryData[category].forEach(({ item, amount }) => {
             let row = document.createElement("tr");
-            row.innerHTML = `<td>${description}</td><td>$${amount.toLocaleString()}</td>`;
+            row.innerHTML = `<td>${item}</td><td>$${amount.toLocaleString()}</td>`;
             tbody.appendChild(row);
         });
 
         table.appendChild(tbody);
         section.appendChild(table);
+        container.appendChild(section);
     });
 
     console.log("Tables Rendered Successfully");
