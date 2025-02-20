@@ -1,97 +1,140 @@
-/* Restore green theme with modern styling */
-body {
-    font-family: 'Arial', sans-serif;
-    background: #f4f7f6;
+/* General Reset */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
-/* Expenditures Table */
-.expenditure-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+/* Body Background */
+body {
+    background: #f4f7f6;
+    color: #333;
+}
+
+/* Navigation Bar */
+nav {
+    background: #20772e;
+    padding: 15px;
+    text-align: center;
+}
+
+nav a {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    text-align: center;
+    color: white;
+    background: url('hubbardston_bg.jpg') center/cover no-repeat;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero h1 {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 36px;
+    font-weight: bold;
+}
+
+/* Main Content Sections */
+.section {
+    padding: 40px;
+    text-align: center;
     background: white;
-    border-radius: 8px;
-    overflow: hidden;
+    margin: 20px auto;
+    width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Buttons */
+.btn {
+    background: #20772e;
+    color: white;
+    padding: 12px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn:hover {
+    background: #165a22;
+}
+
+/* Expenditures Page Styling */
+.container {
+    width: 90%;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Table Header */
-.expenditure-table th {
-    background: #20772e; /* Modern Green */
-    color: white;
-    padding: 12px;
-    text-align: left;
-    font-size: 16px;
+h2 {
+    color: #20772e;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Table Data */
-.expenditure-table td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    font-size: 14px;
+/* Dropdown Selector */
+.select-container {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Alternating Row Colors */
-.expenditure-table tbody tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-/* Hover Effect */
-.expenditure-table tbody tr:hover {
-    background: #e6ffe6; /* Light green hover */
-}
-
-/* Dropdown Menu */
-#departmentDropdown {
-    display: block;
-    margin: 20px auto;
+select {
     padding: 10px;
     font-size: 16px;
-    border: 2px solid #20772e;
-    background: white;
     border-radius: 5px;
-    color: #20772e;
-    cursor: pointer;
-    width: 50%;
+    border: 1px solid #ccc;
 }
 
-/* Dropdown Hover */
-#departmentDropdown:hover {
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
     background: #20772e;
     color: white;
 }
 
-/* Category Color Labels */
-.category-label {
-    padding: 5px 10px;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    display: inline-block;
+tr:nth-child(even) {
+    background: #f9f9f9;
 }
 
-/* Assign colors to each major category */
-.category-GENERAL-GOVERNMENT { background: #ffcc00; color: #333; }
-.category-PUBLIC-SAFETY { background: #ff4444; color: white; }
-.category-EDUCATION { background: #22cc88; color: white; }
-.category-PUBLIC-WORKS { background: #2277cc; color: white; }
-.category-HUMAN-SERVICES { background: #444488; color: white; }
-.category-DEBT { background: #993366; color: white; }
-.category-LIABILITIES { background: #666666; color: white; }
-
-/* Responsive Table */
-@media screen and (max-width: 768px) {
-    .expenditure-table {
-        font-size: 12px;
-    }
-    
-    .expenditure-table th, .expenditure-table td {
-        padding: 8px;
-    }
-
-    #departmentDropdown {
-        width: 90%;
-    }
+/* Footer */
+footer {
+    text-align: center;
+    padding: 15px;
+    background: #333;
+    color: white;
+    margin-top: 30px;
 }
