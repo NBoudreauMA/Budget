@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -25,20 +26,67 @@
         <h2>Revenue Overview</h2>
         <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
 
-        <table id="revenueTable">
-            <thead>
-                <tr>
-                    <th>Account</th>
-                    <th>FY23 Actual</th>
-                    <th>FY24 Actual</th>
-                    <th>FY25 Budget</th>
-                    <th>FY26 Proposed</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Data will be loaded here -->
-            </tbody>
-        </table>
+        <!-- Modern Pie Chart -->
+        <section class="chart-container">
+            <h3>Revenue Distribution (FY26 Proposed)</h3>
+            <canvas id="revenueChart"></canvas>
+        </section>
+
+        <!-- Toggle Sections -->
+        <section class="dropdown">
+            <button class="dropdown-toggle">Tax Levy Revenue</button>
+            <div class="dropdown-content">
+                <table id="taxTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dropdown">
+            <button class="dropdown-toggle">State Aid Revenue</button>
+            <div class="dropdown-content">
+                <table id="stateAidTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dropdown">
+            <button class="dropdown-toggle">Local Receipts Revenue</button>
+            <div class="dropdown-content">
+                <table id="localReceiptsTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
     </main>
 
     <footer>
@@ -47,27 +95,72 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv"; // Change this to your actual file link
-            
+            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv"; // Update with your actual file link
+
             Papa.parse(revenueCSV, {
                 download: true,
                 header: true,
                 complete: function (results) {
-                    let tableBody = document.querySelector("#revenueTable tbody");
+                    let taxTable = document.querySelector("#taxTable tbody");
+                    let stateAidTable = document.querySelector("#stateAidTable tbody");
+                    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
+
+                    let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
+
                     results.data.forEach(row => {
-                        let tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td>${row["Account"] || ""}</td>
-                            <td>${row["FY23 Actual"] || ""}</td>
-                            <td>${row["FY24 Actual"] || ""}</td>
-                            <td>${row["FY25 Budget"] || ""}</td>
-                            <td>${row["FY26 Proposed"] || ""}</td>
+                        let rowHTML = `
+                            <tr>
+                                <td>${row["Account"] || ""}</td>
+                                <td>${row["FY23 Actual"] || ""}</td>
+                                <td>${row["FY24 Actual"] || ""}</td>
+                                <td>${row["FY25 Budget"] || ""}</td>
+                                <td>${row["FY26 Proposed"] || ""}</td>
+                            </tr>
                         `;
-                        tableBody.appendChild(tr);
+
+                        if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
+                            taxTable.innerHTML += rowHTML;
+                            taxTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid")) {
+                            stateAidTable.innerHTML += rowHTML;
+                            stateAidTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        } else {
+                            localReceiptsTable.innerHTML += rowHTML;
+                            localReceiptsTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        }
+                    });
+
+                    // Generate Pie Chart
+                    const ctx = document.getElementById("revenueChart").getContext("2d");
+                    new Chart(ctx, {
+                        type: "pie",
+                        data: {
+                            labels: ["Tax Levy", "State Aid", "Local Receipts"],
+                            datasets: [{
+                                data: [taxTotal, stateAidTotal, localReceiptsTotal],
+                                backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
+                                hoverOffset: 8
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: "bottom" },
+                                tooltip: { enabled: true }
+                            }
+                        }
                     });
                 }
             });
+
+            // Toggle Dropdowns
+            document.querySelectorAll(".dropdown-toggle").forEach(button => {
+                button.addEventListener("click", function () {
+                    this.nextElementSibling.classList.toggle("show");
+                });
+            });
         });
     </script>
+
 </body>
 </html>
