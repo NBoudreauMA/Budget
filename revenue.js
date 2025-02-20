@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    let revenueTables = {
-        "Tax Levy": document.querySelector("#taxLevyTable tbody"),
+    let revenueSections = {
+        "Taxes": document.querySelector("#taxesTable tbody"),
         "State Aid": document.querySelector("#stateAidTable tbody"),
         "Local Receipts": document.querySelector("#localReceiptsTable tbody")
     };
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Revenue CSV Loaded:", results.data);
 
             let revenueCategories = {
-                "Tax Levy": 0,
+                "Taxes": 0,
                 "State Aid": 0,
                 "Local Receipts": 0
             };
@@ -46,6 +46,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
 
+            let taxItems = ["Tax Levy", "Prop 2.5%", "New Growth / Amended NG", "Debt Exclusions"];
+            let stateAidItems = ["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets"];
+            
             results.data.forEach(row => {
                 if (!row["Account"]) return;
 
@@ -61,14 +64,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                 `;
 
-                if (row["Account"].includes("Tax Levy")) {
-                    revenueTables["Tax Levy"].innerHTML += rowHTML;
-                    revenueCategories["Tax Levy"] += fy26Value;
-                } else if (row["Account"].includes("State Aid")) {
-                    revenueTables["State Aid"].innerHTML += rowHTML;
+                if (taxItems.some(item => row["Account"].includes(item))) {
+                    revenueSections["Taxes"].innerHTML += rowHTML;
+                    revenueCategories["Taxes"] += fy26Value;
+                } else if (stateAidItems.some(item => row["Account"].includes(item))) {
+                    revenueSections["State Aid"].innerHTML += rowHTML;
                     revenueCategories["State Aid"] += fy26Value;
                 } else {
-                    revenueTables["Local Receipts"].innerHTML += rowHTML;
+                    revenueSections["Local Receipts"].innerHTML += rowHTML;
                     revenueCategories["Local Receipts"] += fy26Value;
                 }
             });
@@ -76,12 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
             // Add subtotal rows
             Object.keys(revenueCategories).forEach(category => {
                 let subtotalRow = `<tr class="subtotal"><td colspan="4"><strong>Subtotal</strong></td><td><strong>${formatCurrency(revenueCategories[category])}</strong></td></tr>`;
-                revenueTables[category].innerHTML += subtotalRow;
+                revenueSections[category].innerHTML += subtotalRow;
             });
 
             // Calculate grand total
             let grandTotal = Object.values(revenueCategories).reduce((acc, val) => acc + val, 0);
-            grandTotalContainer.innerHTML = `<h3>Grand Total: ${formatCurrency(grandTotal)}</h3>`;
+            grandTotalContainer.innerHTML = `<h3>Gross Revenues: ${formatCurrency(grandTotal)}</h3>`;
 
             // Generate Chart
             const ctx = revenueChartCanvas.getContext("2d");
