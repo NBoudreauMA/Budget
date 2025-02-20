@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expenditures Breakdown</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
     <header>
@@ -21,81 +21,47 @@
         </nav>
     </header>
 
-    <section class="hero">
+    <section>
         <h2>Expenditures Overview</h2>
         <p>A detailed breakdown of expenditures for the Town of Hubbardston.</p>
     </section>
 
+    <!-- Chart Section -->
     <section class="chart-container">
         <canvas id="expenditureChart"></canvas>
     </section>
 
-    <section class="category-section">
-        <h2>Expenditures by Category</h2>
+    <!-- Expenditures Categories -->
+    <section id="GeneralGovernment">
+        <h3>General Government</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>General Government <span class="info-icon" title="Funds used for administrative and operational costs"></span></h3>
-            <table id="GeneralGovernmentTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="PublicSafety">
+        <h3>Public Safety</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Public Safety <span class="info-icon" title="Includes police, fire, and emergency services"></span></h3>
-            <table id="PublicSafetyTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="PublicWorks">
+        <h3>Public Works</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Public Works <span class="info-icon" title="Funding for road maintenance, infrastructure, and town upkeep"></span></h3>
-            <table id="PublicWorksTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="Education">
+        <h3>Education</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Education <span class="info-icon" title="Budget allocated to local schools and education services"></span></h3>
-            <table id="EducationTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="HumanServices">
+        <h3>Human Services</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Human Services <span class="info-icon" title="Covers public health, veterans' services, and senior programs"></span></h3>
-            <table id="HumanServicesTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="CultureandRecreation">
+        <h3>Culture and Recreation</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Culture and Recreation <span class="info-icon" title="Funding for parks, libraries, and community events"></span></h3>
-            <table id="CultureAndRecreationTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="Debt">
+        <h3>Debt</h3>
+    </section>
 
-        <div class="category-table">
-            <h3>Debt <span class="info-icon" title="Payments on loans, bonds, and other municipal debts"></span></h3>
-            <table id="DebtTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="category-table">
-            <h3>Liabilities and Assessments <span class="info-icon" title="Includes pension, insurance, and state-mandated assessments"></span></h3>
-            <table id="LiabilitiesAndAssessmentsTable">
-                <thead><tr><th>Account</th><th>FY24</th><th>FY25 Requested</th><th>FY25 Actual</th><th>FY26 Dept</th><th>FY26 Admin</th><th>Change ($)</th><th>Change (%)</th></tr></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+    <section id="LiabilitiesandAssessments">
+        <h3>Liabilities and Assessments</h3>
     </section>
 
     <script src="expenditures.js"></script>
