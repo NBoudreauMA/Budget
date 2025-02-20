@@ -1,8 +1,31 @@
 <nav class="navbar">
-    <ul>
+    <div class="nav-logo">
+        <a href="index.html">
+            <img src="hubbardston_logo.png" alt="Town of Hubbardston" class="logo">
+        </a>
+    </div>
+    <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="revenue.html">Revenue</a></li>
         <li><a href="expenditures.html">Expenditures</a></li>
         <li><a href="information.html">Information</a></li>
+        <li class="dropdown">
+            <a href="#">Departments ▼</a>
+            <ul class="dropdown-menu">
+                <li><a href="expenditures.html?dept=general">General Government</a></li>
+                <li><a href="expenditures.html?dept=safety">Public Safety</a></li>
+                <li><a href="expenditures.html?dept=publicworks">Public Works</a></li>
+                <li><a href="expenditures.html?dept=education">Education</a></li>
+                <li><a href="expenditures.html?dept=human">Human Services</a></li>
+                <li><a href="expenditures.html?dept=culture">Culture & Recreation</a></li>
+                <li><a href="expenditures.html?dept=debt">Debt</a></li>
+                <li><a href="expenditures.html?dept=liabilities">Liabilities & Assessments</a></li>
+            </ul>
+        </li>
     </ul>
+    <div class="hamburger-menu">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
 </nav>
