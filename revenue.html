@@ -3,119 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Breakdown | Hubbardston Budget</title>
+    <title>Revenue Sources | Hubbardston Budget</title>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Load PapaParse and Chart.js -->
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <!-- Main Revenue Script -->
     <script src="revenue.js" defer></script>
-
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f4f4f4;
-            color: #333;
-        }
-
-        header {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-            padding: 1rem;
-            text-align: center;
-            color: white;
-        }
-
-        nav {
-            background: #1e7e34;
-            padding: 0.5rem 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        nav ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            padding: 10px 15px;
-            border-radius: 5px;
-        }
-
-        .chart-container {
-            background: white;
-            padding: 20px;
-            margin: 20px auto;
-            border-radius: 10px;
-            max-width: 500px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .dropdown-toggle {
-            width: 100%;
-            padding: 12px;
-            background: #28a745;
-            color: white;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .dropdown-content {
-            display: none;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-        }
-
-        .dropdown-content.active {
-            display: block;
-        }
-
-        .subtotal {
-            background-color: #eee;
-            font-weight: bold;
-        }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
-        }
-    </style>
 </head>
 <body>
-    <header>
-        <h1>Revenue Breakdown</h1>
-        <nav>
-            <ul>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="hubbardston_logo.png" alt="Town of Hubbardston">
+                </a>
+            </div>
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="revenue.html" class="active">Revenue</a></li>
                 <li><a href="expenditures.html">Expenditures</a></li>
                 <li><a href="information.html">Information</a></li>
+                <li class="dropdown">
+                    <a href="#">Departments ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="expenditures.html?dept=general">General Government</a></li>
+                        <li><a href="expenditures.html?dept=safety">Public Safety</a></li>
+                        <li><a href="expenditures.html?dept=publicworks">Public Works</a></li>
+                        <li><a href="expenditures.html?dept=education">Education</a></li>
+                    </ul>
+                </li>
             </ul>
-        </nav>
-    </header>
+            <div class="hamburger-menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
 
-    <main>
-        <div class="chart-container">
+    <main class="main-content">
+        <h1 class="text-center mb-2">Revenue Sources</h1>
+        
+        <div class="chart-container" style="height: 400px;">
             <canvas id="revenueChart"></canvas>
         </div>
 
-        <section id="grandTotal"></section>
+        <section id="grandTotal" class="text-center mb-2"></section>
+
+        <div class="revenue-sections">
+            <section id="taxes-section">
+                <h2>Tax Revenue</h2>
+                <table class="data-table" id="taxesTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                            <th>% Change</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="stateaid-section">
+                <h2>State Aid</h2>
+                <table class="data-table" id="stateAidTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                            <th>% Change</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <section id="localreceipts-section">
+                <h2>Local Receipts</h2>
+                <table class="data-table" id="localReceiptsTable">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>FY23 Actual</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Budget</th>
+                            <th>FY26 Proposed</th>
+                            <th>% Change</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+        </div>
     </main>
 
-    <footer><p>&copy; Town of Hubbardston</p></footer>
+    <footer>
+        <p>&copy; 2025 Town of Hubbardston</p>
+    </footer>
 </body>
 </html>
