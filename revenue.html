@@ -2,24 +2,34 @@
     document.addEventListener("DOMContentLoaded", function () {
         const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
 
+        // Fetch and Parse CSV
         Papa.parse(revenueCSV, {
             download: true,
             header: true,
+            skipEmptyLines: true,
             complete: function (results) {
+                if (!results.data || results.data.length === 0) {
+                    console.error("CSV is empty or failed to load.");
+                    return;
+                }
+
                 let taxTable = document.querySelector("#taxTable tbody");
                 let stateAidTable = document.querySelector("#stateAidTable tbody");
                 let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
 
                 let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
 
-                results.data.forEach(row => {
-                    function formatCurrency(value) {
-                        return value ? `$${parseFloat(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "$0.00";
-                    }
+                function formatCurrency(value) {
+                    let num = parseFloat(value);
+                    return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                }
 
+                results.data.forEach(row => {
+                    if (!row["Account"]) return; // Skip empty rows
+                    
                     let rowHTML = `
                         <tr>
-                            <td>${row["Account"] || ""}</td>
+                            <td>${row["Account"]}</td>
                             <td>${formatCurrency(row["FY23 Actual"])}</td>
                             <td>${formatCurrency(row["FY24 Actual"])}</td>
                             <td>${formatCurrency(row["FY25 Budget"])}</td>
@@ -27,19 +37,21 @@
                         </tr>
                     `;
 
+                    let fy26Value = parseFloat(row["FY26 Proposed"]) || 0;
+
                     if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
                         taxTable.innerHTML += rowHTML;
-                        taxTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        taxTotal += fy26Value;
                     } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid") || row["Account"].includes("Veterans' Benefits")) {
                         stateAidTable.innerHTML += rowHTML;
-                        stateAidTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        stateAidTotal += fy26Value;
                     } else {
                         localReceiptsTable.innerHTML += rowHTML;
-                        localReceiptsTotal += parseFloat(row["FY26 Proposed"] || 0);
+                        localReceiptsTotal += fy26Value;
                     }
                 });
 
-                // Pie Chart Updates
+                // Generate Pie Chart
                 const ctx = document.getElementById("revenueChart").getContext("2d");
                 new Chart(ctx, {
                     type: "doughnut",
@@ -60,15 +72,17 @@
                         }
                     }
                 });
+            },
+            error: function (err) {
+                console.error("Error loading CSV:", err);
             }
         });
 
-        // Dropdown Toggle Functionality
+        // Fix Dropdown Toggle Functionality
         document.querySelectorAll(".dropdown-toggle").forEach(button => {
             button.addEventListener("click", function () {
-                this.classList.toggle("active");
                 let content = this.nextElementSibling;
-                content.style.display = (content.style.display === "block") ? "none" : "block";
+                content.style.display = content.style.display === "block" ? "none" : "block";
             });
         });
     });
