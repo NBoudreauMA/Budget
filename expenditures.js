@@ -1,73 +1,79 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Expenditures script loaded.");
 
-    // Load CSV file
-    Papa.parse("expenditures_cleaned.csv", {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-            console.log("Expenditures CSV Loaded:", results.data);
-
-            let data = results.data;
-            let categoryData = {};
-
-            // Organize expenditures by department
-            data.forEach(row => {
-                let department = row["Category"]?.trim();  // Main department (General Government, Public Safety, etc.)
-                let item = row["Item Description"]?.trim();
-                let amount = parseFloat(row["FY26 ADMIN"].replace(/[$,]/g, '')) || 0; // Remove $ and commas
-
-                if (!department || !item || isNaN(amount) || amount <= 0) return;
-
-                // Store details for table rendering
-                if (!categoryData[department]) {
-                    categoryData[department] = [];
-                }
-                categoryData[department].push({ item, amount });
-            });
-
-            // Render tables for each major category
-            renderExpenditureTables(categoryData);
-        }
-    });
-});
-
-// 📌 Render tables for each **main category**
-function renderExpenditureTables(categoryData) {
-    let container = document.getElementById("expenditureContainer");
-    if (!container) {
-        console.warn("No container found for expenditures.");
+    const expenditureContainer = document.getElementById("expenditureContainer");
+    if (!expenditureContainer) {
+        console.error("❌ No container found for expenditures.");
         return;
     }
-    container.innerHTML = ""; // Clear previous content
 
-    Object.keys(categoryData).forEach(category => {
-        let section = document.createElement("div");
-        section.className = "expenditure-section";
-        
-        let title = document.createElement("h2");
-        title.textContent = category;
-        section.appendChild(title);
+    fetch("expenditures_cleaned.csv")
+        .then(response => response.text())
+        .then(csvData => {
+            Papa.parse(csvData, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    console.log("✅ Expenditures CSV Loaded:", results.data);
+                    renderExpenditureTables(results.data);
+                }
+            });
+        })
+        .catch(error => console.error("❌ Error loading CSV:", error));
 
-        let table = document.createElement("table");
-        table.className = "styled-table";
+    function renderExpenditureTables(data) {
+        const categories = {};
 
-        let thead = document.createElement("thead");
-        thead.innerHTML = `<tr><th>Expenditure Item</th><th>Amount ($)</th></tr>`;
-        table.appendChild(thead);
-
-        let tbody = document.createElement("tbody");
-        categoryData[category].forEach(({ item, amount }) => {
-            let row = document.createElement("tr");
-            row.innerHTML = `<td>${item}</td><td>$${amount.toLocaleString()}</td>`;
-            tbody.appendChild(row);
+        // Organize data by category
+        data.forEach(row => {
+            const category = row["Category"] || "Other"; // Default if category missing
+            if (!categories[category]) {
+                categories[category] = [];
+            }
+            categories[category].push(row);
         });
 
-        table.appendChild(tbody);
-        section.appendChild(table);
-        container.appendChild(section);
-    });
+        // Create tables for each category
+        for (const [category, items] of Object.entries(categories)) {
+            const section = document.createElement("section");
+            section.innerHTML = `<h2>${category}</h2>`;
+            
+            const table = document.createElement("table");
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Account Number</th>
+                        <th>Item Description</th>
+                        <th>FY24 Actual</th>
+                        <th>FY25 Requested</th>
+                        <th>FY25 Actual</th>
+                        <th>FY26 Dept</th>
+                        <th>FY26 Admin</th>
+                        <th>Change ($)</th>
+                        <th>Change (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(row => `
+                        <tr>
+                            <td>${row["Account Number"] || ""}</td>
+                            <td>${row["Item Description"] || ""}</td>
+                            <td>${row["FY24 ACTUAL"] || ""}</td>
+                            <td>${row["FY25 REQUESTED"] || ""}</td>
+                            <td>${row["FY25 ACTUAL"] || ""}</td>
+                            <td>${row["FY26 DEPT"] || ""}</td>
+                            <td>${row["FY26 ADMIN"] || ""}</td>
+                            <td>${row["CHANGE ($)"] || ""}</td>
+                            <td>${row["CHANGE (%)"] || ""}</td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            `;
+            
+            section.appendChild(table);
+            expenditureContainer.appendChild(section);
+        }
 
-    console.log("Tables Rendered Successfully");
-}
+        console.log("✅ Tables Rendered Successfully");
+    }
+});
