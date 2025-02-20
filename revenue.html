@@ -1,152 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Breakdown | Hubbardston Budget</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <header>
-        <h1>Revenue Breakdown</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="revenue.html">Revenue</a></li>
-                <li><a href="expenditures.html">Expenditures</a></li>
-                <li><a href="information.html">Information</a></li>
-            </ul>
-        </nav>
-    </header>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
 
-    <main>
-        <h2>Revenue Overview</h2>
-        <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
+        Papa.parse(revenueCSV, {
+            download: true,
+            header: true,
+            complete: function (results) {
+                let taxTable = document.querySelector("#taxTable tbody");
+                let stateAidTable = document.querySelector("#stateAidTable tbody");
+                let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
 
-        <!-- Modern Pie Chart -->
-        <section class="chart-container">
-            <h3>Revenue Distribution (FY26 Proposed)</h3>
-            <div class="chart-wrapper">
-                <canvas id="revenueChart"></canvas>
-            </div>
-        </section>
+                let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
 
-        <!-- Dropdown Sections for Revenue Buckets -->
-        <section class="dropdown-container">
-            <button class="dropdown-toggle">Tax Levy Revenue</button>
-            <div class="dropdown-content">
-                <table id="taxTable">
-                    <thead>
-                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
+                results.data.forEach(row => {
+                    function formatCurrency(value) {
+                        return value ? `$${parseFloat(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "$0.00";
+                    }
 
-        <section class="dropdown-container">
-            <button class="dropdown-toggle">State Aid Revenue</button>
-            <div class="dropdown-content">
-                <table id="stateAidTable">
-                    <thead>
-                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
+                    let rowHTML = `
+                        <tr>
+                            <td>${row["Account"] || ""}</td>
+                            <td>${formatCurrency(row["FY23 Actual"])}</td>
+                            <td>${formatCurrency(row["FY24 Actual"])}</td>
+                            <td>${formatCurrency(row["FY25 Budget"])}</td>
+                            <td>${formatCurrency(row["FY26 Proposed"])}</td>
+                        </tr>
+                    `;
 
-        <section class="dropdown-container">
-            <button class="dropdown-toggle">Local Receipts Revenue</button>
-            <div class="dropdown-content">
-                <table id="localReceiptsTable">
-                    <thead>
-                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; <span id="yearFooter"></span> Town of Hubbardston</p>
-    </footer>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
-
-            Papa.parse(revenueCSV, {
-                download: true,
-                header: true,
-                complete: function (results) {
-                    let taxTable = document.querySelector("#taxTable tbody");
-                    let stateAidTable = document.querySelector("#stateAidTable tbody");
-                    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
-
-                    let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
-
-                    results.data.forEach(row => {
-                        let rowHTML = `
-                            <tr>
-                                <td>${row["Account"] || ""}</td>
-                                <td>${row["FY23 Actual"] || ""}</td>
-                                <td>${row["FY24 Actual"] || ""}</td>
-                                <td>${row["FY25 Budget"] || ""}</td>
-                                <td>${row["FY26 Proposed"] || ""}</td>
-                            </tr>
-                        `;
-
-                        if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
-                            taxTable.innerHTML += rowHTML;
-                            taxTotal += parseFloat(row["FY26 Proposed"] || 0);
-                        } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid") || row["Account"].includes("Veterans' Benefits")) {
-                            stateAidTable.innerHTML += rowHTML;
-                            stateAidTotal += parseFloat(row["FY26 Proposed"] || 0);
-                        } else {
-                            localReceiptsTable.innerHTML += rowHTML;
-                            localReceiptsTotal += parseFloat(row["FY26 Proposed"] || 0);
-                        }
-                    });
-
-                    // Generate Pie Chart
-                    const ctx = document.getElementById("revenueChart").getContext("2d");
-                    new Chart(ctx, {
-                        type: "doughnut",
-                        data: {
-                            labels: ["Tax Levy", "State Aid", "Local Receipts"],
-                            datasets: [{
-                                data: [taxTotal, stateAidTotal, localReceiptsTotal],
-                                backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
-                                hoverOffset: 6
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { position: "bottom" },
-                                tooltip: { enabled: true }
-                            }
-                        }
-                    });
-                }
-            });
-
-            // Dropdown Toggle Functionality
-            document.querySelectorAll(".dropdown-toggle").forEach(button => {
-                button.addEventListener("click", function () {
-                    this.classList.toggle("active");
-                    let content = this.nextElementSibling;
-                    content.style.display = (content.style.display === "block") ? "none" : "block";
+                    if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
+                        taxTable.innerHTML += rowHTML;
+                        taxTotal += parseFloat(row["FY26 Proposed"] || 0);
+                    } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid") || row["Account"].includes("Veterans' Benefits")) {
+                        stateAidTable.innerHTML += rowHTML;
+                        stateAidTotal += parseFloat(row["FY26 Proposed"] || 0);
+                    } else {
+                        localReceiptsTable.innerHTML += rowHTML;
+                        localReceiptsTotal += parseFloat(row["FY26 Proposed"] || 0);
+                    }
                 });
+
+                // Pie Chart Updates
+                const ctx = document.getElementById("revenueChart").getContext("2d");
+                new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Tax Levy", "State Aid", "Local Receipts"],
+                        datasets: [{
+                            data: [taxTotal, stateAidTotal, localReceiptsTotal],
+                            backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: "bottom" },
+                            tooltip: { enabled: true }
+                        }
+                    }
+                });
+            }
+        });
+
+        // Dropdown Toggle Functionality
+        document.querySelectorAll(".dropdown-toggle").forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("active");
+                let content = this.nextElementSibling;
+                content.style.display = (content.style.display === "block") ? "none" : "block";
             });
         });
-    </script>
-
-</body>
-</html>
+    });
+</script>
