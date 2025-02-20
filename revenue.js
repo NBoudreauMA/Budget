@@ -15,9 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     let revenueChartCanvas = document.getElementById("revenueChart");
+    let grandTotalContainer = document.getElementById("grandTotal");
 
-    if (!revenueChartCanvas) {
-        console.error("Revenue chart canvas missing.");
+    if (!revenueChartCanvas || !grandTotalContainer) {
+        console.error("Revenue chart canvas or total container missing.");
         return;
     }
 
@@ -72,10 +73,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            // Ensure all revenue values are numbers
-            Object.keys(revenueCategories).forEach(key => {
-                if (isNaN(revenueCategories[key])) revenueCategories[key] = 0;
+            // Add subtotal rows
+            Object.keys(revenueCategories).forEach(category => {
+                let subtotalRow = `<tr class="subtotal"><td colspan="4"><strong>Subtotal</strong></td><td><strong>${formatCurrency(revenueCategories[category])}</strong></td></tr>`;
+                revenueTables[category].innerHTML += subtotalRow;
             });
+
+            // Calculate grand total
+            let grandTotal = Object.values(revenueCategories).reduce((acc, val) => acc + val, 0);
+            grandTotalContainer.innerHTML = `<h3>Grand Total: ${formatCurrency(grandTotal)}</h3>`;
 
             // Generate Chart
             const ctx = revenueChartCanvas.getContext("2d");
