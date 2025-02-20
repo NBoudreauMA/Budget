@@ -1,124 +1,98 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Revenue script loaded.");
 
-    const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
-
-    if (typeof Papa === "undefined") {
-        console.error("PapaParse library is missing.");
-        return;
-    }
-
-    let revenueSections = {
-        "Taxes": document.querySelector("#taxesTable tbody"),
-        "State Aid": document.querySelector("#stateAidTable tbody"),
-        "Local Receipts": document.querySelector("#localReceiptsTable tbody")
-    };
-
-    let revenueChartCanvas = document.getElementById("revenueChart");
-    let grandTotalContainer = document.getElementById("grandTotal");
-
-    if (!revenueChartCanvas || !grandTotalContainer) {
-        console.error("Revenue chart canvas or total container missing.");
-        return;
-    }
-
-    Papa.parse(revenueCSV, {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-            if (!results.data || results.data.length === 0) {
-                console.error("Revenue CSV is empty.");
-                return;
-            }
-
-            console.log("Revenue CSV Loaded:", results.data);
-
-            let revenueCategories = {
-                "Taxes": 0,
-                "State Aid": 0,
-                "Local Receipts": 0
-            };
-
-            function formatCurrency(value) {
-                if (!value) return "$0.00";
-                let num = parseFloat(value.toString().replace(/[$,]/g, ""));
-                return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            }
-
-            let taxItems = ["Tax Levy", "Prop 2.5%", "New Growth / Amended NG", "Debt Exclusions"];
-            let stateAidItems = ["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets"];
-            
-            results.data.forEach(row => {
-                if (!row["Account"]) return;
-
-                let fy26Value = parseFloat(row["FY26 Proposed"].replace(/[$,]/g, "")) || 0;
-
-                let rowHTML = `
-                    <tr>
-                        <td>${row["Account"]}</td>
-                        <td>${formatCurrency(row["FY23 Actual"])}</td>
-                        <td>${formatCurrency(row["FY24 Actual"])}</td>
-                        <td>${formatCurrency(row["FY25 Budget"])}</td>
-                        <td>${formatCurrency(row["FY26 Proposed"])}</td>
-                    </tr>
-                `;
-
-                if (taxItems.some(item => row["Account"].includes(item))) {
-                    revenueSections["Taxes"].innerHTML += rowHTML;
-                    revenueCategories["Taxes"] += fy26Value;
-                } else if (stateAidItems.some(item => row["Account"].includes(item))) {
-                    revenueSections["State Aid"].innerHTML += rowHTML;
-                    revenueCategories["State Aid"] += fy26Value;
-                } else {
-                    revenueSections["Local Receipts"].innerHTML += rowHTML;
-                    revenueCategories["Local Receipts"] += fy26Value;
-                }
-            });
-
-            // Add subtotal rows
-            Object.keys(revenueCategories).forEach(category => {
-                let subtotalRow = `<tr class="subtotal"><td colspan="4"><strong>Subtotal</strong></td><td><strong>${formatCurrency(revenueCategories[category])}</strong></td></tr>`;
-                revenueSections[category].innerHTML += subtotalRow;
-            });
-
-            // Calculate grand total
-            let grandTotal = Object.values(revenueCategories).reduce((acc, val) => acc + val, 0);
-            grandTotalContainer.innerHTML = `<h3>Gross Revenues: ${formatCurrency(grandTotal)}</h3>`;
-
-            // Generate Chart
-            const ctx = revenueChartCanvas.getContext("2d");
-            new Chart(ctx, {
-                type: "pie",
-                data: {
-                    labels: Object.keys(revenueCategories),
-                    datasets: [{
-                        data: Object.values(revenueCategories),
-                        backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726"],
-                        hoverOffset: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: 10
-                    },
-                    plugins: {
-                        legend: { position: "bottom" },
-                        tooltip: { enabled: true }
-                    }
-                }
-            });
-
-            console.log("Revenue Chart Rendered Successfully");
-        }
-    });
-
-    // Collapsible Dropdown Logic
-    document.querySelectorAll(".dropdown-toggle").forEach(button => {
-        button.addEventListener("click", function () {
-            this.nextElementSibling.classList.toggle("active");
+    // Mobile menu functionality
+    const hamburger = document.querySelector('.hamburger-menu');
+    const navLinks = document.querySelector('.nav-links');
+    
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
         });
-    });
+    }
+
+    // Revenue chart initialization
+    const revenueChart = document.getElementById("revenueChart");
+    if (revenueChart) {
+        Papa.parse("revenue_data.csv", {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                if (!results.data || results.data.length === 0) {
+                    console.error("Revenue CSV is empty.");
+                    return;
+                }
+
+                console.log("Revenue CSV Loaded:", results.data);
+
+                let revenueCategories = {
+                    "Taxes": 0,
+                    "State Aid": 0,
+                    "Local Receipts": 0
+                };
+
+                // Process data
+                results.data.forEach(row => {
+                    if (!row["Account"]) return;
+
+                    let fy26Value = parseFloat(row["FY26 Proposed"]?.replace(/[$,]/g, "")) || 0;
+
+                    if (row["Account"].includes("Tax") || row["Account"].includes("Growth")) {
+                        revenueCategories["Taxes"] += fy26Value;
+                    } else if (row["Account"].includes("Aid") || row["Account"].includes("State")) {
+                        revenueCategories["State Aid"] += fy26Value;
+                    } else {
+                        revenueCategories["Local Receipts"] += fy26Value;
+                    }
+                });
+
+                // Update grand total
+                const grandTotal = Object.values(revenueCategories).reduce((a, b) => a + b, 0);
+                const grandTotalElement = document.getElementById("grandTotal");
+                if (grandTotalElement) {
+                    grandTotalElement.innerHTML = `<h3>Total Revenue: ${formatCurrency(grandTotal)}</h3>`;
+                }
+
+                // Render chart
+                const ctx = revenueChart.getContext("2d");
+                new Chart(ctx, {
+                    type: "pie",
+                    data: {
+                        labels: Object.keys(revenueCategories),
+                        datasets: [{
+                            data: Object.values(revenueCategories),
+                            backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726"]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: "bottom" },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percentage = ((value / grandTotal) * 100).toFixed(1);
+                                        return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
 });
+
+// Helper function to format currency
+function formatCurrency(value) {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(value);
+}
