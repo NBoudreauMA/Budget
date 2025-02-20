@@ -11,48 +11,29 @@
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="index.html">
-                    <img src="hubbardston_logo.png" alt="Town of Hubbardston">
-                </a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="revenue.html">Revenue</a></li>
-                <li><a href="expenditures.html" class="active">Expenditures</a></li>
-                <li><a href="information.html">Information</a></li>
-                <li class="dropdown">
-                    <a href="#">Departments ▼</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#GeneralGovernment">General Government</a></li>
-                        <li><a href="#PublicSafety">Public Safety</a></li>
-                        <li><a href="#PublicWorks">Public Works</a></li>
-                        <li><a href="#Education">Education</a></li>
-                        <li><a href="#HumanServices">Human Services</a></li>
-                        <li><a href="#CultureandRecreation">Culture & Recreation</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <div class="hamburger-menu">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
+        <a href="index.html" class="nav-logo">
+            <img src="hubbardston_logo.png" alt="Town of Hubbardston">
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="revenue.html">Revenue</a>
+            <a href="expenditures.html">Expenditures</a>
+            <a href="information.html">Information</a>
+            <a href="#" class="departments-link">Departments ▼</a>
         </div>
     </nav>
 
     <main class="main-content">
-        <h1 class="text-center">Town Expenditures</h1>
+        <h1>Town Expenditures</h1>
 
-        <div class="filters mb-2">
-            <select id="yearFilter" class="filter-select">
+        <div class="filters">
+            <select id="yearFilter">
                 <option value="FY26">FY 2026</option>
                 <option value="FY25">FY 2025</option>
                 <option value="FY24">FY 2024</option>
                 <option value="FY23">FY 2023</option>
             </select>
-            <select id="departmentFilter" class="filter-select">
+            <select id="departmentFilter">
                 <option value="all">All Departments</option>
                 <option value="GeneralGovernment">General Government</option>
                 <option value="PublicSafety">Public Safety</option>
@@ -60,6 +41,7 @@
                 <option value="Education">Education</option>
                 <option value="HumanServices">Human Services</option>
                 <option value="CultureandRecreation">Culture and Recreation</option>
+                <option value="DebtService">Debt Service</option>
             </select>
         </div>
 
@@ -67,34 +49,34 @@
             <canvas id="expenditureChart"></canvas>
         </div>
 
-        <section id="grandTotal" class="text-center mb-2"></section>
+        <div id="totalBudget" class="total-budget">Total Budget: $0</div>
 
-        <div class="expenditure-sections">
-            <section id="GeneralGovernment" class="department-section">
+        <div class="department-sections">
+            <section id="GeneralGovernment">
                 <h2>General Government</h2>
             </section>
 
-            <section id="PublicSafety" class="department-section">
+            <section id="PublicSafety">
                 <h2>Public Safety</h2>
             </section>
 
-            <section id="PublicWorks" class="department-section">
+            <section id="PublicWorks">
                 <h2>Public Works</h2>
             </section>
 
-            <section id="Education" class="department-section">
+            <section id="Education">
                 <h2>Education</h2>
             </section>
 
-            <section id="HumanServices" class="department-section">
+            <section id="HumanServices">
                 <h2>Human Services</h2>
             </section>
 
-            <section id="CultureandRecreation" class="department-section">
+            <section id="CultureandRecreation">
                 <h2>Culture and Recreation</h2>
             </section>
 
-            <section id="DebtService" class="department-section">
+            <section id="DebtService">
                 <h2>Debt Service</h2>
             </section>
         </div>
