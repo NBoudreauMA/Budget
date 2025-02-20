@@ -6,7 +6,7 @@
     <title>Expenditures Breakdown</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="expenditures.js"></script>
 </head>
 <body>
     <header>
@@ -21,49 +21,18 @@
         </nav>
     </header>
 
-    <section>
-        <h2>Expenditures Overview</h2>
-        <p>A detailed breakdown of expenditures for the Town of Hubbardston.</p>
-    </section>
+    <main>
+        <section>
+            <h2>Expenditures Overview</h2>
+            <p>A detailed breakdown of expenditures for the Town of Hubbardston.</p>
+        </section>
 
-    <!-- Chart Section -->
-    <section class="chart-container">
-        <canvas id="expenditureChart"></canvas>
-    </section>
+        <!-- Expenditure tables will be dynamically inserted here -->
+        <div id="expenditureContainer"></div>
+    </main>
 
-    <!-- Expenditures Categories -->
-    <section id="GeneralGovernment">
-        <h3>General Government</h3>
-    </section>
-
-    <section id="PublicSafety">
-        <h3>Public Safety</h3>
-    </section>
-
-    <section id="PublicWorks">
-        <h3>Public Works</h3>
-    </section>
-
-    <section id="Education">
-        <h3>Education</h3>
-    </section>
-
-    <section id="HumanServices">
-        <h3>Human Services</h3>
-    </section>
-
-    <section id="CultureandRecreation">
-        <h3>Culture and Recreation</h3>
-    </section>
-
-    <section id="Debt">
-        <h3>Debt</h3>
-    </section>
-
-    <section id="LiabilitiesandAssessments">
-        <h3>Liabilities and Assessments</h3>
-    </section>
-
-    <script src="expenditures.js"></script>
+    <footer>
+        <p>&copy; 2025 Town of Hubbardston - Budget Dashboard</p>
+    </footer>
 </body>
 </html>
