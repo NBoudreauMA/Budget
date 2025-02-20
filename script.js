@@ -1,31 +1,37 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Expenditures script loaded.");
+    console.log("Script loaded and DOM fully parsed.");
 
-    const expendituresCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/expenditures_cleaned.csv";
+    const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue.csv";
 
-    // Ensure PapaParse is loaded
     if (typeof Papa === "undefined") {
         console.error("PapaParse library is missing.");
         return;
     }
 
+    // Ensure tables exist before running the script
+    let taxLevyTable = document.querySelector("#taxLevyTable tbody");
+    let stateAidTable = document.querySelector("#stateAidTable tbody");
+    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
+
+    if (!taxLevyTable || !stateAidTable || !localReceiptsTable) {
+        console.error("One or more revenue tables are missing in revenue.html.");
+        return;
+    }
+
     // Fetch and Parse CSV
-    Papa.parse(expendituresCSV, {
+    Papa.parse(revenueCSV, {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
             if (!results.data || results.data.length === 0) {
-                console.error("CSV is empty or failed to load.");
+                console.error("Revenue CSV is empty.");
                 return;
             }
 
-            console.log("Expenditures CSV successfully loaded:", results.data);
+            console.log("Revenue CSV Loaded:", results.data);
 
-            let generalGovTable = document.querySelector("#generalGovTable tbody");
-            let publicSafetyTable = document.querySelector("#publicSafetyTable tbody");
-
-            let govTotal = 0, safetyTotal = 0;
+            let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
 
             function formatCurrency(value) {
                 let num = parseFloat(value.replace(/[$,]/g, ""));
@@ -38,37 +44,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 let rowHTML = `
                     <tr>
                         <td>${row["Category"]}</td>
-                        <td>${row["Item Description"]}</td>
-                        <td>${formatCurrency(row["FY24 ACTUAL"])}</td>
-                        <td>${formatCurrency(row["FY25 REQUESTED"])}</td>
-                        <td>${formatCurrency(row["FY25 ACTUAL"])}</td>
-                        <td>${formatCurrency(row["FY26 DEPT"])}</td>
-                        <td>${formatCurrency(row["FY26 ADMIN"])}</td>
-                        <td>${formatCurrency(row["CHANGE ($)"])}</td>
-                        <td>${row["CHANGE (%)"]}</td>
+                        <td>${formatCurrency(row["FY23 Actual"])}</td>
+                        <td>${formatCurrency(row["FY24 Actual"])}</td>
+                        <td>${formatCurrency(row["FY25 Budget"])}</td>
+                        <td>${formatCurrency(row["FY26 Proposed"])}</td>
                     </tr>
                 `;
 
-                let fy26Value = parseFloat(row["FY26 ADMIN"].replace(/[$,]/g, "")) || 0;
+                let fy26Value = parseFloat(row["FY26 Proposed"].replace(/[$,]/g, "")) || 0;
 
-                if (row["Category"].includes("General Government")) {
-                    generalGovTable.innerHTML += rowHTML;
-                    govTotal += fy26Value;
-                } else if (row["Category"].includes("Public Safety")) {
-                    publicSafetyTable.innerHTML += rowHTML;
-                    safetyTotal += fy26Value;
+                if (row["Category"].includes("Tax Levy")) {
+                    taxLevyTable.innerHTML += rowHTML;
+                    taxTotal += fy26Value;
+                } else if (row["Category"].includes("State Aid")) {
+                    stateAidTable.innerHTML += rowHTML;
+                    stateAidTotal += fy26Value;
+                } else if (row["Category"].includes("Local Receipts")) {
+                    localReceiptsTable.innerHTML += rowHTML;
+                    localReceiptsTotal += fy26Value;
                 }
             });
 
-            // Ensure the chart updates properly
-            const ctx = document.getElementById("expenditureChart").getContext("2d");
+            // Update Revenue Chart
+            const ctx = document.getElementById("revenueChart").getContext("2d");
             new Chart(ctx, {
-                type: "doughnut",
+                type: "pie",
                 data: {
-                    labels: ["General Government", "Public Safety"],
+                    labels: ["Tax Levy", "State Aid", "Local Receipts"],
                     datasets: [{
-                        data: [govTotal, safetyTotal],
-                        backgroundColor: ["#FF7043", "#42A5F5"],
+                        data: [taxTotal, stateAidTotal, localReceiptsTotal],
+                        backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726"],
                         hoverOffset: 6
                     }]
                 },
@@ -81,16 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
             });
-        },
-        error: function (err) {
-            console.error("Error loading CSV:", err);
         }
-    });
-
-    document.querySelectorAll(".dropdown-toggle").forEach(button => {
-        button.addEventListener("click", function () {
-            let content = this.nextElementSibling;
-            content.style.display = content.style.display === "block" ? "none" : "block";
-        });
     });
 });
