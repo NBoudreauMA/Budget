@@ -26,7 +26,7 @@
         <h2>Revenue Overview</h2>
         <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
 
-        <!-- Modern Pie Chart with Responsive Container -->
+        <!-- Modern Pie Chart -->
         <section class="chart-container">
             <h3>Revenue Distribution (FY26 Proposed)</h3>
             <div class="chart-wrapper">
@@ -34,28 +34,42 @@
             </div>
         </section>
 
-        <!-- Toggle Sections -->
+        <!-- Dropdown Sections for Revenue Buckets -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Tax Levy Revenue</button>
             <div class="dropdown-content">
-                <table id="taxTable"></table>
+                <table id="taxTable">
+                    <thead>
+                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </section>
 
         <section class="dropdown-container">
             <button class="dropdown-toggle">State Aid Revenue</button>
             <div class="dropdown-content">
-                <table id="stateAidTable"></table>
+                <table id="stateAidTable">
+                    <thead>
+                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </section>
 
         <section class="dropdown-container">
             <button class="dropdown-toggle">Local Receipts Revenue</button>
             <div class="dropdown-content">
-                <table id="localReceiptsTable"></table>
+                <table id="localReceiptsTable">
+                    <thead>
+                        <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
             </div>
         </section>
-
     </main>
 
     <footer>
@@ -70,9 +84,9 @@
                 download: true,
                 header: true,
                 complete: function (results) {
-                    let taxTable = document.querySelector("#taxTable");
-                    let stateAidTable = document.querySelector("#stateAidTable");
-                    let localReceiptsTable = document.querySelector("#localReceiptsTable");
+                    let taxTable = document.querySelector("#taxTable tbody");
+                    let stateAidTable = document.querySelector("#stateAidTable tbody");
+                    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
 
                     let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
 
@@ -90,7 +104,7 @@
                         if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
                             taxTable.innerHTML += rowHTML;
                             taxTotal += parseFloat(row["FY26 Proposed"] || 0);
-                        } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid")) {
+                        } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid") || row["Account"].includes("Veterans' Benefits")) {
                             stateAidTable.innerHTML += rowHTML;
                             stateAidTotal += parseFloat(row["FY26 Proposed"] || 0);
                         } else {
