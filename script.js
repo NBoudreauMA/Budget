@@ -78,3 +78,21 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("td").forEach(td => {
+        let term = td.innerText.trim();
+        let tooltipTexts = {
+            "Prop 2.5%": "A Massachusetts law limiting how much property tax can increase annually.",
+            "New Growth / Amended NG": "Revenue from new construction, renovations, or changes to taxable property.",
+            "Debt Exclusions (School Roof)": "Temporary tax increases to fund specific projects, like a school roof.",
+            "Unrestricted General Government Aid": "State funds that can be used flexibly for town operations.",
+            "PILOT": "Payments in Lieu of Taxes—funds from tax-exempt properties (e.g., state-owned land).",
+            "Motor Vehicle Excise": "A tax on registered vehicles in town, calculated based on value.",
+            "Local Option Taxes": "Optional taxes approved by the town, such as meals or hotel taxes."
+        };
+
+        if (tooltipTexts[term]) {
+            td.innerHTML += ` <span class="info-icon" title="${tooltipTexts[term]}">ℹ️</span>`;
+        }
+    });
+});
