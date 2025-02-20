@@ -6,11 +6,11 @@
     <title>Revenue Breakdown | Hubbardston Budget</title>
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Load PapaParse FIRST to avoid errors -->
+    <!-- Load dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Ensure main script loads AFTER libraries -->
+    <!-- Main script -->
     <script src="script.js" defer></script>
 </head>
 <body>
@@ -30,7 +30,7 @@
         <h2>Revenue Overview</h2>
         <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
 
-        <!-- Modern Pie Chart -->
+        <!-- Pie Chart Section -->
         <section class="chart-container">
             <h3>Revenue Distribution (FY26 Proposed)</h3>
             <div class="chart-wrapper">
@@ -38,7 +38,7 @@
             </div>
         </section>
 
-        <!-- Tax Levy Revenue -->
+        <!-- Revenue Categories with Dropdown -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Tax Levy Revenue <span class="info-icon" title="The total amount of property tax the town can legally raise each year.">ℹ️</span></button>
             <div class="dropdown-content">
@@ -57,7 +57,6 @@
             </div>
         </section>
 
-        <!-- State Aid Revenue -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">State Aid Revenue <span class="info-icon" title="Funds provided by the state to support local government operations.">ℹ️</span></button>
             <div class="dropdown-content">
@@ -76,7 +75,6 @@
             </div>
         </section>
 
-        <!-- Local Receipts Revenue -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Local Receipts Revenue <span class="info-icon" title="Revenue from fees, permits, fines, and local services.">ℹ️</span></button>
             <div class="dropdown-content">
