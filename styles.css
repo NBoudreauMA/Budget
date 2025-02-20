@@ -6,17 +6,21 @@
     font-family: 'Arial', sans-serif;
 }
 
-/* Body Background */
-body {
-    background: #f4f7f6;
-    color: #333;
-}
-
 /* Navigation Bar */
 nav {
-    background: #20772e;
+    background: #165a22; /* Rich green */
+    display: flex;
+    justify-content: center;
     padding: 15px;
-    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out;
+}
+
+nav:hover {
+    background: #1c6e2c; /* Slightly brighter green on hover */
 }
 
 nav a {
@@ -24,11 +28,66 @@ nav a {
     font-size: 18px;
     font-weight: bold;
     text-decoration: none;
-    margin: 0 15px;
+    margin: 0 20px;
+    padding: 10px 15px;
+    position: relative;
+    transition: color 0.3s ease-in-out;
+}
+
+/* Smooth underline effect */
+nav a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: #ffcc00; /* Gold highlight */
+    left: 0;
+    bottom: -5px;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+nav a:hover::after {
+    transform: scaleX(1);
 }
 
 nav a:hover {
-    text-decoration: underline;
+    color: #ffcc00; /* Highlight text color */
+}
+
+/* Animated Dropdown for Departments */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.nav-dropdown-content a {
+    display: block;
+    color: #165a22;
+    padding: 10px 15px;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+}
+
+.nav-dropdown-content a:hover {
+    background: #f4f7f6;
+    color: #165a22;
+}
+
+.nav-dropdown:hover .nav-dropdown-content {
+    display: block;
 }
 
 /* Hero Section */
@@ -51,90 +110,7 @@ nav a:hover {
     font-weight: bold;
 }
 
-/* Main Content Sections */
-.section {
-    padding: 40px;
-    text-align: center;
-    background: white;
-    margin: 20px auto;
-    width: 80%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-/* Buttons */
-.btn {
-    background: #20772e;
-    color: white;
-    padding: 12px 20px;
-    font-size: 16px;
-    text-decoration: none;
-    border-radius: 5px;
-    display: inline-block;
-    margin-top: 20px;
-    transition: background 0.3s ease-in-out;
-}
-
-.btn:hover {
-    background: #165a22;
-}
-
-/* Expenditures Page Styling */
-.container {
-    width: 90%;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    color: #20772e;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Dropdown Selector */
-.select-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-select {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-th {
-    background: #20772e;
-    color: white;
-}
-
-tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-/* Footer */
-footer {
-    text-align: center;
-    padding: 15px;
-    background: #333;
-    color: white;
-    margin-top: 30px;
+/* Smooth Scroll */
+html {
+    scroll-behavior: smooth;
 }
