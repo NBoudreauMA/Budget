@@ -1,106 +1,109 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Expenditures script loaded.");
 
-    const expendituresCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/expenditures_cleaned.csv";
-
-    if (typeof Papa === "undefined") {
-        console.error("PapaParse library is missing.");
-        return;
-    }
-
-    let expenditureChartCanvas = document.getElementById("expenditureChart");
-    let categories = {
-        "General Government": 0,
-        "Public Safety": 0,
-        "Public Works": 0,
-        "Education": 0,
-        "Human Services": 0,
-        "Culture and Recreation": 0,
-        "Debt": 0,
-        "Liabilities and Assessments": 0
-    };
-
-    function formatCurrency(value) {
-        if (!value || value.trim() === "" || isNaN(parseFloat(value.replace(/[$,]/g, "")))) {
-            return "$0.00"; // Default value for missing or invalid numbers
-        }
-        let num = parseFloat(value.replace(/[$,]/g, ""));
-        return `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-
-    Papa.parse(expendituresCSV, {
+    // Load CSV file
+    Papa.parse("expenditures_cleaned.csv", {
         download: true,
         header: true,
-        skipEmptyLines: true,
+        dynamicTyping: true,
         complete: function (results) {
-            if (!results.data || results.data.length === 0) {
-                console.error("Expenditures CSV is empty.");
-                return;
-            }
-
             console.log("Expenditures CSV Loaded:", results.data);
 
-            let expenditureTables = {};
+            let data = results.data;
+            let categoryTotals = {};
+            let departmentData = {};
 
-            Object.keys(categories).forEach(category => {
-                let tableId = category.replace(/\s+/g, '') + "Table";
-                expenditureTables[category] = document.querySelector(`#${tableId} tbody`);
-                if (!expenditureTables[category]) {
-                    console.warn(`Table not found for category: ${category}`);
+            // Aggregate expenditures by main category
+            data.forEach(row => {
+                let category = row["Category"]?.trim();  // Ensure category is cleaned
+                let department = row["Department"]?.trim();
+                let amount = parseFloat(row["FY26 ADMIN"]) || 0;
+
+                // Skip if there's no amount
+                if (!category || isNaN(amount)) return;
+
+                // Aggregate main category totals for the pie chart
+                if (!categoryTotals[category]) {
+                    categoryTotals[category] = 0;
                 }
+                categoryTotals[category] += amount;
+
+                // Store department-wise data under categories
+                if (!departmentData[category]) {
+                    departmentData[category] = [];
+                }
+                departmentData[category].push({ department, amount });
             });
 
-            results.data.forEach(row => {
-                if (!row["Category"] || !row["FY26 Admin"]) return;
+            // Render the pie chart
+            renderExpenditureChart(categoryTotals);
 
-                let category = row["Category"].trim();
-                let formattedValue = formatCurrency(row["FY26 Admin"]);
-                let fy26Value = parseFloat(formattedValue.replace(/[$,]/g, "")) || 0;
-
-                if (categories.hasOwnProperty(category)) {
-                    categories[category] += fy26Value;
-
-                    let rowHTML = `
-                        <tr>
-                            <td>${row["Account"]}</td>
-                            <td>${formatCurrency(row["FY24 Actual"])}</td>
-                            <td>${formatCurrency(row["FY25 Requested"])}</td>
-                            <td>${formatCurrency(row["FY25 Actual"])}</td>
-                            <td>${formatCurrency(row["FY26 Dept"])}</td>
-                            <td>${formattedValue}</td>
-                            <td>${formatCurrency(row["Change ($)"])}</td>
-                            <td>${row["Change (%)"] || "0%"}%</td>
-                        </tr>
-                    `;
-
-                    if (expenditureTables[category]) {
-                        expenditureTables[category].innerHTML += rowHTML;
-                    }
-                }
-            });
-
-            const ctx = expenditureChartCanvas.getContext("2d");
-            new Chart(ctx, {
-                type: "pie",
-                data: {
-                    labels: Object.keys(categories),
-                    datasets: [{
-                        data: Object.values(categories),
-                        backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726", "#8E44AD", "#3498DB", "#E74C3C", "#27AE60", "#F39C12"],
-                        hoverOffset: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: "bottom" },
-                        tooltip: { enabled: true }
-                    }
-                }
-            });
-
-            console.log("Expenditure Chart Rendered Successfully");
+            // Render tables for each major category
+            renderExpenditureTables(departmentData);
         }
     });
 });
+
+// Render pie chart for main categories
+function renderExpenditureChart(categoryTotals) {
+    let ctx = document.getElementById("expenditureChart").getContext("2d");
+
+    let categories = Object.keys(categoryTotals);
+    let values = Object.values(categoryTotals);
+
+    if (categories.length === 0) {
+        console.warn("No categories found for pie chart.");
+        return;
+    }
+
+    new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: categories,
+            datasets: [{
+                data: values,
+                backgroundColor: [
+                    "#4CAF50", "#FF9800", "#F44336", "#3F51B5", "#9C27B0", "#009688", "#FFC107", "#E91E63"
+                ],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: "bottom" }
+            }
+        }
+    });
+
+    console.log("Expenditure Chart Rendered Successfully");
+}
+
+// Render tables for each category
+function renderExpenditureTables(departmentData) {
+    Object.keys(departmentData).forEach(category => {
+        let section = document.getElementById(category.replace(/\s+/g, ""));
+        if (!section) {
+            console.warn(`No section found for category: ${category}`);
+            return;
+        }
+
+        let table = document.createElement("table");
+        table.className = "styled-table";
+
+        let thead = document.createElement("thead");
+        thead.innerHTML = `<tr><th>Department</th><th>FY26 ADMIN</th></tr>`;
+        table.appendChild(thead);
+
+        let tbody = document.createElement("tbody");
+        departmentData[category].forEach(({ department, amount }) => {
+            let row = document.createElement("tr");
+            row.innerHTML = `<td>${department}</td><td>$${amount.toFixed(2)}</td>`;
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        section.appendChild(table);
+    });
+
+    console.log("Tables Rendered Successfully");
+}
