@@ -1,7 +1,7 @@
-/* Restore original styling */
+/* Restore green theme with modern styling */
 body {
     font-family: 'Arial', sans-serif;
-    background: #e5e5e5;
+    background: #f4f7f6;
     margin: 0;
     padding: 0;
 }
@@ -12,39 +12,55 @@ body {
     border-collapse: collapse;
     margin-top: 20px;
     background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Table Header */
 .expenditure-table th {
-    background: #205072;
+    background: #20772e; /* Modern Green */
     color: white;
     padding: 12px;
     text-align: left;
+    font-size: 16px;
 }
 
+/* Table Data */
 .expenditure-table td {
     padding: 12px;
     border-bottom: 1px solid #ddd;
+    font-size: 14px;
 }
 
-/* Alternating row colors */
+/* Alternating Row Colors */
 .expenditure-table tbody tr:nth-child(even) {
     background: #f9f9f9;
 }
 
 /* Hover Effect */
 .expenditure-table tbody tr:hover {
-    background: #cce7ff;
+    background: #e6ffe6; /* Light green hover */
 }
 
 /* Dropdown Menu */
 #departmentDropdown {
     display: block;
-    margin: 10px auto;
-    padding: 8px;
+    margin: 20px auto;
+    padding: 10px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 2px solid #20772e;
     background: white;
     border-radius: 5px;
+    color: #20772e;
+    cursor: pointer;
+    width: 50%;
+}
+
+/* Dropdown Hover */
+#departmentDropdown:hover {
+    background: #20772e;
+    color: white;
 }
 
 /* Category Color Labels */
@@ -64,3 +80,18 @@ body {
 .category-HUMAN-SERVICES { background: #444488; color: white; }
 .category-DEBT { background: #993366; color: white; }
 .category-LIABILITIES { background: #666666; color: white; }
+
+/* Responsive Table */
+@media screen and (max-width: 768px) {
+    .expenditure-table {
+        font-size: 12px;
+    }
+    
+    .expenditure-table th, .expenditure-table td {
+        padding: 8px;
+    }
+
+    #departmentDropdown {
+        width: 90%;
+    }
+}
