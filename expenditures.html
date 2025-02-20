@@ -3,74 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expenditures Breakdown</title>
+    <title>Expenditures | Hubbardston Budget</title>
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script defer src="expenditures.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="expenditures.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Expenditures Breakdown</h1>
-        <nav>
-            <ul>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="hubbardston_logo.png" alt="Town of Hubbardston">
+                </a>
+            </div>
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="revenue.html">Revenue</a></li>
                 <li><a href="expenditures.html" class="active">Expenditures</a></li>
                 <li><a href="information.html">Information</a></li>
+                <li class="dropdown">
+                    <a href="#">Departments ▼</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#GeneralGovernment">General Government</a></li>
+                        <li><a href="#PublicSafety">Public Safety</a></li>
+                        <li><a href="#PublicWorks">Public Works</a></li>
+                        <li><a href="#Education">Education</a></li>
+                        <li><a href="#HumanServices">Human Services</a></li>
+                        <li><a href="#CultureandRecreation">Culture & Recreation</a></li>
+                        <li><a href="#DebtService">Debt Service</a></li>
+                        <li><a href="#Unclassified">Other Expenses</a></li>
+                    </ul>
+                </li>
             </ul>
-        </nav>
-    </header>
+            <div class="hamburger-menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
 
-    <main>
-        <section class="intro">
-            <h2>Expenditures Overview</h2>
-            <p>A detailed breakdown of expenditures for the Town of Hubbardston.</p>
-            <input type="text" id="searchBar" placeholder="Search by department or item..." onkeyup="filterTable()">
-        </section>
+    <main class="main-content">
+        <h1 class="text-center mb-2">Town Expenditures</h1>
 
-        <div id="expenditureContainer"></div>
+        <div class="filters mb-2">
+            <select id="yearFilter" class="filter-select">
+                <option value="FY26">FY 2026</option>
+                <option value="FY25">FY 2025</option>
+                <option value="FY24">FY 2024</option>
+                <option value="FY23">FY 2023</option>
+            </select>
+            <select id="departmentFilter" class="filter-select">
+                <option value="all">All Departments</option>
+                <option value="GeneralGovernment">General Government</option>
+                <option value="PublicSafety">Public Safety</option>
+                <option value="PublicWorks">Public Works</option>
+                <option value="Education">Education</option>
+                <option value="HumanServices">Human Services</option>
+                <option value="CultureandRecreation">Culture & Recreation</option>
+                <option value="DebtService">Debt Service</option>
+                <option value="Unclassified">Other Expenses</option>
+            </select>
+        </div>
+        
+        <div class="chart-container" style="height: 400px;">
+            <canvas id="expenditureChart"></canvas>
+        </div>
+
+        <section id="grandTotal" class="text-center mb-2"></section>
+
+        <div class="expenditure-sections">
+            <section id="GeneralGovernment" class="department-section">
+                <h2>General Government</h2>
+            </section>
+
+            <section id="PublicSafety" class="department-section">
+                <h2>Public Safety</h2>
+            </section>
+
+            <section id="PublicWorks" class="department-section">
+                <h2>Public Works</h2>
+            </section>
+
+            <section id="Education" class="department-section">
+                <h2>Education</h2>
+            </section>
+
+            <section id="HumanServices" class="department-section">
+                <h2>Human Services</h2>
+            </section>
+
+            <section id="CultureandRecreation" class="department-section">
+                <h2>Culture and Recreation</h2>
+            </section>
+
+            <section id="DebtService" class="department-section">
+                <h2>Debt Service</h2>
+            </section>
+
+            <section id="Unclassified" class="department-section">
+                <h2>Other Expenses</h2>
+            </section>
+        </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 Town of Hubbardston - Budget Dashboard</p>
+        <p>&copy; 2025 Town of Hubbardston</p>
     </footer>
-
-    <script>
-        function filterTable() {
-            const input = document.getElementById("searchBar").value.toLowerCase();
-            document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
-            });
-        }
-<div id="navbar-container"></div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        fetch("navbar.html")
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("navbar-container").innerHTML = data;
-                loadNavFunctionality();
-            })
-            .catch(error => console.error("Error loading navbar:", error));
-    });
-
-    function loadNavFunctionality() {
-        const hamburger = document.querySelector(".hamburger-menu");
-        const navLinks = document.querySelector(".nav-links");
-        hamburger.addEventListener("click", () => {
-            navLinks.classList.toggle("nav-active");
-            hamburger.classList.toggle("toggle");
-        });
-
-        window.addEventListener("scroll", function() {
-            const navbar = document.querySelector(".navbar");
-            if (window.scrollY > 50) {
-                navbar.classList.add("scrolled");
-            } else {
-                navbar.classList.remove("scrolled");
-            }
-        });
-    }
-</script>
-
+</body>
+</html>
