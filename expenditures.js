@@ -88,15 +88,5 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         tableHTML += `</tbody></table>`;
-        expenditureContainer.innerHTML = tableHTML;
+        expenditure
 
-        console.log("✅ Table Rendered Successfully");
-    }
-
-    function filterTableByDepartment(department) {
-        document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
-            const category = row.getAttribute("data-category");
-            row.style.display = department === "all" || category === department ? "" : "none";
-        });
-    }
-});
