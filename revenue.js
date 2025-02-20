@@ -37,12 +37,15 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             function formatCurrency(value) {
-                let num = parseFloat(value.replace(/[$,]/g, ""));
+                if (!value) return "$0.00";
+                let num = parseFloat(value.toString().replace(/[$,]/g, ""));
                 return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
             }
 
             results.data.forEach(row => {
                 if (!row["Account"]) return;
+
+                let fy26Value = parseFloat(row["FY26 Proposed"].replace(/[$,]/g, "")) || 0;
 
                 let rowHTML = `
                     <tr>
@@ -54,18 +57,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>
                 `;
 
-                let fy26Value = formatCurrency(row["FY26 Proposed"]).replace(/[$,]/g, "");
-
                 if (row["Account"].includes("Tax Levy")) {
                     taxLevyTable.innerHTML += rowHTML;
-                    revenueCategories["Tax Levy"] += parseFloat(fy26Value);
+                    revenueCategories["Tax Levy"] += fy26Value;
                 } else if (row["Account"].includes("State Aid")) {
                     stateAidTable.innerHTML += rowHTML;
-                    revenueCategories["State Aid"] += parseFloat(fy26Value);
+                    revenueCategories["State Aid"] += fy26Value;
                 } else {
                     localReceiptsTable.innerHTML += rowHTML;
-                    revenueCategories["Local Receipts"] += parseFloat(fy26Value);
+                    revenueCategories["Local Receipts"] += fy26Value;
                 }
+            });
+
+            // Ensure all revenue values are numbers
+            Object.keys(revenueCategories).forEach(key => {
+                if (isNaN(revenueCategories[key])) revenueCategories[key] = 0;
             });
 
             // Generate Chart
