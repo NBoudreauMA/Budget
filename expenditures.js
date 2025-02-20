@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     Papa.parse("expenditures_cleaned.csv", {
         download: true,
         header: true,
-        dynamicTyping: true,
+        skipEmptyLines: true,
         complete: function (results) {
             console.log("Expenditures CSV Loaded:", results.data);
 
@@ -17,10 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
             data.forEach(row => {
                 let category = row["Category"]?.trim();  // Main category
                 let department = row["Item Description"]?.trim();  // Department names for pie chart
-                let amount = parseFloat(row["FY26 ADMIN"]) || 0;
+                let amount = parseFloat(row["FY26 ADMIN"].replace(/[$,]/g, '')) || 0; // Remove $ and commas
 
-                // Skip if there's no amount
-                if (!department || isNaN(amount)) return;
+                // Skip if there's no valid amount
+                if (!department || isNaN(amount) || amount <= 0) return;
 
                 // Store department-wise totals for pie chart
                 if (!departmentTotals[department]) {
@@ -46,7 +46,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 📌 Render pie chart for departments
 function renderExpenditureChart(departmentTotals) {
-    let ctx = document.getElementById("expenditureChart").getContext("2d");
+    let ctx = document.getElementById("expenditureChart")?.getContext("2d");
+    if (!ctx) {
+        console.warn("No canvas found for pie chart.");
+        return;
+    }
 
     let departments = Object.keys(departmentTotals);
     let values = Object.values(departmentTotals);
@@ -81,9 +85,10 @@ function renderExpenditureChart(departmentTotals) {
 // 📌 Render tables for each category
 function renderExpenditureTables(categoryData) {
     Object.keys(categoryData).forEach(category => {
-        let section = document.getElementById(category.replace(/\s+/g, ""));
+        let sectionId = category.replace(/\s+/g, "");
+        let section = document.getElementById(sectionId);
         if (!section) {
-            console.warn(`No section found for category: ${category}`);
+            console.warn(`No section found for category: ${category} (ID: ${sectionId})`);
             return;
         }
 
