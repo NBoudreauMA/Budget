@@ -1,98 +1,102 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Auto-update year dynamically
-    document.getElementById("year").innerText = new Date().getFullYear();
-    document.getElementById("yearFooter").innerText = new Date().getFullYear();
-    document.getElementById("footerYear").innerText = new Date().getFullYear();
+    console.log("Script loaded and DOM fully parsed.");
 
-    // Dark Mode Toggle with Local Storage
-    const darkModeToggle = document.getElementById("darkModeToggle");
-    const body = document.body;
+    // Ensure all table elements exist before running the script
+    const taxLevyTable = document.querySelector("#taxLevyTable tbody");
+    const stateAidTable = document.querySelector("#stateAidTable tbody");
+    const localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
 
-    if (localStorage.getItem("dark-mode") === "enabled") {
-        body.classList.add("dark-mode");
+    if (!taxLevyTable || !stateAidTable || !localReceiptsTable) {
+        console.error("One or more revenue tables are missing in revenue.html.");
+        return;
     }
 
-    darkModeToggle.addEventListener("click", () => {
-        body.classList.toggle("dark-mode");
-        if (body.classList.contains("dark-mode")) {
-            localStorage.setItem("dark-mode", "enabled");
-        } else {
-            localStorage.setItem("dark-mode", "disabled");
-        }
-    });
+    const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
 
-    // Back to Top Button
-    const backToTop = document.getElementById("backToTop");
-    window.addEventListener("scroll", () => {
-        backToTop.style.display = window.scrollY > 200 ? "block" : "none";
-    });
-    backToTop.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    // Ensure PapaParse is loaded
+    if (typeof Papa === "undefined") {
+        console.error("PapaParse library is missing.");
+        return;
+    }
 
-    // FAQ Toggle Animation
-    document.querySelectorAll(".faq-item h3").forEach((question) => {
-        question.addEventListener("click", () => {
-            const answer = question.nextElementSibling;
-            answer.classList.toggle("faq-answer");
-            answer.style.display = answer.style.display === "block" ? "none" : "block";
-            question.classList.toggle("active");
-        });
-    });
-
-    // Intersection Observer for Scroll Animations
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-                observer.unobserve(entry.target);
+    // Fetch and Parse CSV
+    Papa.parse(revenueCSV, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+            if (!results.data || results.data.length === 0) {
+                console.error("CSV is empty or failed to load.");
+                return;
             }
-        });
-    }, { threshold: 0.2 });
 
-    document.querySelectorAll(".fade-in").forEach(element => {
-        observer.observe(element);
-    });
+            console.log("CSV successfully loaded:", results.data);
 
-    // Budget Chart with Smooth Animations
-    const budgetChart = document.getElementById("budgetChart");
-    if (budgetChart) {
-        const ctx = budgetChart.getContext("2d");
-        new Chart(ctx, {
-            type: "doughnut",
-            data: {
-                labels: ["Revenue", "Expenditures", "Investments"],
-                datasets: [{
-                    data: [5000000, 4800000, 700000],
-                    backgroundColor: ["#66BB6A", "#FF7043", "#42A5F5"],
-                    hoverOffset: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: "bottom" },
-                    tooltip: { enabled: true }
+            let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
+
+            function formatCurrency(value) {
+                let num = parseFloat(value);
+                return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+
+            results.data.forEach(row => {
+                if (!row["Account"]) return;
+
+                let rowHTML = `
+                    <tr>
+                        <td>${row["Account"]}</td>
+                        <td>${formatCurrency(row["FY23 Actual"])}</td>
+                        <td>${formatCurrency(row["FY24 Actual"])}</td>
+                        <td>${formatCurrency(row["FY25 Budget"])}</td>
+                        <td>${formatCurrency(row["FY26 Proposed"])}</td>
+                    </tr>
+                `;
+
+                let fy26Value = parseFloat(row["FY26 Proposed"]) || 0;
+
+                if (["Tax Levy", "Prop 2.5%", "New Growth / Amended NG", "Debt Exclusions (School Roof)"].includes(row["Account"])) {
+                    taxLevyTable.innerHTML += rowHTML;
+                    taxTotal += fy26Value;
+                } else if (["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets (Library)"].includes(row["Account"])) {
+                    stateAidTable.innerHTML += rowHTML;
+                    stateAidTotal += fy26Value;
+                } else {
+                    localReceiptsTable.innerHTML += rowHTML;
+                    localReceiptsTotal += fy26Value;
                 }
-            }
-        });
-    }
-});
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("td").forEach(td => {
-        let term = td.innerText.trim();
-        let tooltipTexts = {
-            "Prop 2.5%": "A Massachusetts law limiting how much property tax can increase annually.",
-            "New Growth / Amended NG": "Revenue from new construction, renovations, or changes to taxable property.",
-            "Debt Exclusions (School Roof)": "Temporary tax increases to fund specific projects, like a school roof.",
-            "Unrestricted General Government Aid": "State funds that can be used flexibly for town operations.",
-            "PILOT": "Payments in Lieu of Taxes—funds from tax-exempt properties (e.g., state-owned land).",
-            "Motor Vehicle Excise": "A tax on registered vehicles in town, calculated based on value.",
-            "Local Option Taxes": "Optional taxes approved by the town, such as meals or hotel taxes."
-        };
+            });
 
-        if (tooltipTexts[term]) {
-            td.innerHTML += ` <span class="info-icon" title="${tooltipTexts[term]}">ℹ️</span>`;
+            // Ensure the chart updates properly
+            const ctx = document.getElementById("revenueChart").getContext("2d");
+            new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Tax Levy", "State Aid", "Local Receipts"],
+                    datasets: [{
+                        data: [taxTotal, stateAidTotal, localReceiptsTotal],
+                        backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: "bottom" },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        },
+        error: function (err) {
+            console.error("Error loading CSV:", err);
         }
+    });
+
+    document.querySelectorAll(".dropdown-toggle").forEach(button => {
+        button.addEventListener("click", function () {
+            let content = this.nextElementSibling;
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        });
     });
 });
