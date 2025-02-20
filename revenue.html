@@ -26,64 +26,33 @@
         <h2>Revenue Overview</h2>
         <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
 
-        <!-- Modern Pie Chart -->
+        <!-- Modern Pie Chart with Responsive Container -->
         <section class="chart-container">
             <h3>Revenue Distribution (FY26 Proposed)</h3>
-            <canvas id="revenueChart"></canvas>
+            <div class="chart-wrapper">
+                <canvas id="revenueChart"></canvas>
+            </div>
         </section>
 
         <!-- Toggle Sections -->
-        <section class="dropdown">
+        <section class="dropdown-container">
             <button class="dropdown-toggle">Tax Levy Revenue</button>
             <div class="dropdown-content">
-                <table id="taxTable">
-                    <thead>
-                        <tr>
-                            <th>Account</th>
-                            <th>FY23 Actual</th>
-                            <th>FY24 Actual</th>
-                            <th>FY25 Budget</th>
-                            <th>FY26 Proposed</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <table id="taxTable"></table>
             </div>
         </section>
 
-        <section class="dropdown">
+        <section class="dropdown-container">
             <button class="dropdown-toggle">State Aid Revenue</button>
             <div class="dropdown-content">
-                <table id="stateAidTable">
-                    <thead>
-                        <tr>
-                            <th>Account</th>
-                            <th>FY23 Actual</th>
-                            <th>FY24 Actual</th>
-                            <th>FY25 Budget</th>
-                            <th>FY26 Proposed</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <table id="stateAidTable"></table>
             </div>
         </section>
 
-        <section class="dropdown">
+        <section class="dropdown-container">
             <button class="dropdown-toggle">Local Receipts Revenue</button>
             <div class="dropdown-content">
-                <table id="localReceiptsTable">
-                    <thead>
-                        <tr>
-                            <th>Account</th>
-                            <th>FY23 Actual</th>
-                            <th>FY24 Actual</th>
-                            <th>FY25 Budget</th>
-                            <th>FY26 Proposed</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+                <table id="localReceiptsTable"></table>
             </div>
         </section>
 
@@ -95,15 +64,15 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv"; // Update with your actual file link
+            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
 
             Papa.parse(revenueCSV, {
                 download: true,
                 header: true,
                 complete: function (results) {
-                    let taxTable = document.querySelector("#taxTable tbody");
-                    let stateAidTable = document.querySelector("#stateAidTable tbody");
-                    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
+                    let taxTable = document.querySelector("#taxTable");
+                    let stateAidTable = document.querySelector("#stateAidTable");
+                    let localReceiptsTable = document.querySelector("#localReceiptsTable");
 
                     let taxTotal = 0, stateAidTotal = 0, localReceiptsTotal = 0;
 
@@ -133,17 +102,18 @@
                     // Generate Pie Chart
                     const ctx = document.getElementById("revenueChart").getContext("2d");
                     new Chart(ctx, {
-                        type: "pie",
+                        type: "doughnut",
                         data: {
                             labels: ["Tax Levy", "State Aid", "Local Receipts"],
                             datasets: [{
                                 data: [taxTotal, stateAidTotal, localReceiptsTotal],
                                 backgroundColor: ["#66BB6A", "#42A5F5", "#FF7043"],
-                                hoverOffset: 8
+                                hoverOffset: 6
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { position: "bottom" },
                                 tooltip: { enabled: true }
@@ -153,10 +123,12 @@
                 }
             });
 
-            // Toggle Dropdowns
+            // Dropdown Toggle Functionality
             document.querySelectorAll(".dropdown-toggle").forEach(button => {
                 button.addEventListener("click", function () {
-                    this.nextElementSibling.classList.toggle("show");
+                    this.classList.toggle("active");
+                    let content = this.nextElementSibling;
+                    content.style.display = (content.style.display === "block") ? "none" : "block";
                 });
             });
         });
