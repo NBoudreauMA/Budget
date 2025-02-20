@@ -1,215 +1,128 @@
-document.addEventListener("DOMContentLoaded", function () {
-    console.log("Expenditures script loaded.");
+/* Navigation */
+.navbar {
+    background: #165a22;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-    // Mobile menu functionality
-    const hamburger = document.querySelector('.hamburger-menu');
-    const navLinks = document.querySelector('.nav-links');
+.nav-logo img {
+    height: 40px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filters select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Chart Container */
+.chart-container {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 400px;
+}
+
+/* Total Budget */
+.total-budget {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 2rem 0;
+}
+
+/* Department Sections */
+.department-sections section {
+    margin-bottom: 2rem;
+}
+
+.department-sections h2 {
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Data Tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.data-table th {
+    background: #165a22;
+    color: white;
+}
+
+.data-table tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Footer */
+footer {
+    background: #165a22;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
     
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
+    .filters {
+        flex-direction: column;
     }
-
-    // Get filter elements
-    const yearFilter = document.getElementById('yearFilter');
-    const departmentFilter = document.getElementById('departmentFilter');
-    let globalData = null;
-
-    // Load CSV file
-    Papa.parse("expenditures_cleaned.csv", {
-        download: true,
-        header: true,
-        dynamicTyping: true,
-        complete: function (results) {
-            console.log("Expenditures CSV Loaded:", results.data);
-            globalData = results.data;
-            processAndDisplayData();
-
-            // Add filter event listeners
-            yearFilter.addEventListener('change', processAndDisplayData);
-            departmentFilter.addEventListener('change', processAndDisplayData);
-        }
-    });
-
-    function processAndDisplayData() {
-        const selectedYear = yearFilter.value;
-        const selectedDept = departmentFilter.value;
-        
-        // Get column name for selected year
-        const yearColumn = {
-            'FY26': 'FY26 ADMIN',
-            'FY25': 'FY25 BUDGET',
-            'FY24': 'FY24 ACTUAL',
-            'FY23': 'FY23 ACTUAL'
-        }[selectedYear];
-
-        let categoryTotals = {};
-        let departmentData = {};
-
-        // Process data
-        globalData.forEach(row => {
-            if (!row.Category || !row[yearColumn]) return;
-
-            const category = row.Category.trim();
-            const department = row.Department?.trim() || 'Uncategorized';
-            const amount = parseFloat(row[yearColumn]) || 0;
-
-            // Skip if filtering by department and doesn't match
-            if (selectedDept !== 'all' && category.replace(/\s+/g, '') !== selectedDept) {
-                return;
-            }
-
-            // Aggregate totals
-            if (!categoryTotals[category]) {
-                categoryTotals[category] = 0;
-            }
-            categoryTotals[category] += amount;
-
-            // Store department data
-            if (!departmentData[category]) {
-                departmentData[category] = [];
-            }
-            departmentData[category].push({
-                department: department,
-                amount: amount,
-                fy23: parseFloat(row["FY23 ACTUAL"]) || 0,
-                fy24: parseFloat(row["FY24 ACTUAL"]) || 0,
-                fy25: parseFloat(row["FY25 BUDGET"]) || 0,
-                fy26: parseFloat(row["FY26 ADMIN"]) || 0
-            });
-        });
-
-        // Update visualizations
-        renderExpenditureChart(categoryTotals);
-        renderDepartmentTables(departmentData, yearColumn);
-
-        // Update visibility based on filter
-        document.querySelectorAll('.department-section').forEach(section => {
-            if (selectedDept === 'all' || section.id === selectedDept) {
-                section.style.display = 'block';
-            } else {
-                section.style.display = 'none';
-            }
-        });
+    
+    .main-content {
+        padding: 1rem;
     }
-
-    function renderExpenditureChart(categoryTotals) {
-        const ctx = document.getElementById("expenditureChart").getContext("2d");
-        const totalExpenditure = Object.values(categoryTotals).reduce((a, b) => a + b, 0);
-
-        // Update grand total
-        document.getElementById('grandTotal').innerHTML = 
-            `<h3>Total Budget: ${formatCurrency(totalExpenditure)}</h3>`;
-
-        // Destroy existing chart if it exists
-        if (window.expenditureChart) {
-            window.expenditureChart.destroy();
-        }
-
-        window.expenditureChart = new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: Object.keys(categoryTotals),
-                datasets: [{
-                    data: Object.values(categoryTotals),
-                    backgroundColor: [
-                        "#4CAF50", "#2196F3", "#FFC107", "#9C27B0", 
-                        "#FF5722", "#607D8B", "#795548", "#E91E63"
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: "bottom"
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.raw;
-                                const percentage = ((value / totalExpenditure) * 100).toFixed(1);
-                                return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    function renderDepartmentTables(departmentData, yearColumn) {
-        Object.entries(departmentData).forEach(([category, departments]) => {
-            const sectionId = category.replace(/\s+/g, "");
-            const section = document.getElementById(sectionId);
-            
-            if (!section) {
-                console.warn(`No section found for category: ${category}`);
-                return;
-            }
-
-            // Clear existing table
-            const existingTable = section.querySelector('table');
-            if (existingTable) {
-                existingTable.remove();
-            }
-
-            // Create new table
-            const table = document.createElement("table");
-            table.className = "data-table";
-
-            // Add header
-            const thead = document.createElement("thead");
-            thead.innerHTML = `
-                <tr>
-                    <th>Department</th>
-                    <th>Amount</th>
-                    <th>% of Category</th>
-                </tr>
-            `;
-            table.appendChild(thead);
-
-            // Add body
-            const tbody = document.createElement("tbody");
-            const categoryTotal = departments.reduce((sum, dept) => sum + dept.amount, 0);
-
-            // Sort departments by amount
-            departments.sort((a, b) => b.amount - a.amount);
-
-            departments.forEach(dept => {
-                const percentOfCategory = ((dept.amount / categoryTotal) * 100).toFixed(1);
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${dept.department}</td>
-                    <td>${formatCurrency(dept.amount)}</td>
-                    <td>${percentOfCategory}%</td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // Add total row
-            const totalRow = document.createElement("tr");
-            totalRow.className = "category-total";
-            totalRow.innerHTML = `
-                <td><strong>Total</strong></td>
-                <td><strong>${formatCurrency(categoryTotal)}</strong></td>
-                <td><strong>100%</strong></td>
-            `;
-            tbody.appendChild(totalRow);
-
-            table.appendChild(tbody);
-            section.appendChild(table);
-        });
-    }
-});
-
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    }).format(amount);
 }
