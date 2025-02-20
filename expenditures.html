@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expenditures | Hubbardston Budget</title>
-    
-    <!-- Stylesheets -->
+    <title>Town Expenditures | Hubbardston Budget</title>
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="expenditures.js" defer></script>
@@ -35,8 +31,6 @@
                         <li><a href="#Education">Education</a></li>
                         <li><a href="#HumanServices">Human Services</a></li>
                         <li><a href="#CultureandRecreation">Culture & Recreation</a></li>
-                        <li><a href="#DebtService">Debt Service</a></li>
-                        <li><a href="#Unclassified">Other Expenses</a></li>
                     </ul>
                 </li>
             </ul>
@@ -49,7 +43,7 @@
     </nav>
 
     <main class="main-content">
-        <h1 class="text-center mb-2">Town Expenditures</h1>
+        <h1 class="text-center">Town Expenditures</h1>
 
         <div class="filters mb-2">
             <select id="yearFilter" class="filter-select">
@@ -65,13 +59,11 @@
                 <option value="PublicWorks">Public Works</option>
                 <option value="Education">Education</option>
                 <option value="HumanServices">Human Services</option>
-                <option value="CultureandRecreation">Culture & Recreation</option>
-                <option value="DebtService">Debt Service</option>
-                <option value="Unclassified">Other Expenses</option>
+                <option value="CultureandRecreation">Culture and Recreation</option>
             </select>
         </div>
-        
-        <div class="chart-container" style="height: 400px;">
+
+        <div class="chart-container">
             <canvas id="expenditureChart"></canvas>
         </div>
 
@@ -104,10 +96,6 @@
 
             <section id="DebtService" class="department-section">
                 <h2>Debt Service</h2>
-            </section>
-
-            <section id="Unclassified" class="department-section">
-                <h2>Other Expenses</h2>
             </section>
         </div>
     </main>
