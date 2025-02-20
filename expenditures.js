@@ -22,6 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("❌ Error loading CSV:", error));
 
     function renderExpenditureTable(data) {
+        if (!data.length) {
+            console.error("❌ No data found in CSV.");
+            expenditureContainer.innerHTML = "<p>No expenditure data available.</p>";
+            return;
+        }
+
         let tableHTML = `
             <table class="expenditure-table">
                 <thead>
@@ -47,3 +53,20 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${row["Category"] || "-"}</td>
                     <td>${row["Item Description"] || "-"}</td>
                     <td>${row["Account Number"] || "-"}</td>
+                    <td>${row["FY24 ACTUAL"] || "-"}</td>
+                    <td>${row["FY25 REQUESTED"] || "-"}</td>
+                    <td>${row["FY25 ACTUAL"] || "-"}</td>
+                    <td>${row["FY26 DEPT"] || "-"}</td>
+                    <td>${row["FY26 ADMIN"] || "-"}</td>
+                    <td>${row["CHANGE ($)"] || "-"}</td>
+                    <td>${row["CHANGE (%)"] || "-"}</td>
+                </tr>
+            `;
+        });
+
+        tableHTML += `</tbody></table>`;
+        expenditureContainer.innerHTML = tableHTML;
+
+        console.log("✅ Table Rendered Successfully");
+    }
+});
