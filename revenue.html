@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue | Hubbardston Budget</title>
+    <title>Revenue Breakdown | Hubbardston Budget</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 </head>
 <body>
     <header>
@@ -18,12 +20,54 @@
             </ul>
         </nav>
     </header>
+
     <main>
-        <h2>Revenue Sources</h2>
-        <p>This section will detail the sources of revenue funding municipal operations, including tax collections, grants, and other income streams.</p>
+        <h2>Revenue Overview</h2>
+        <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
+
+        <table id="revenueTable">
+            <thead>
+                <tr>
+                    <th>Account</th>
+                    <th>FY23 Actual</th>
+                    <th>FY24 Actual</th>
+                    <th>FY25 Budget</th>
+                    <th>FY26 Proposed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
     </main>
+
     <footer>
-        <p>&copy; 2025 Town of Hubbardston</p>
+        <p>&copy; <span id="yearFooter"></span> Town of Hubbardston</p>
     </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv"; // Change this to your actual file link
+            
+            Papa.parse(revenueCSV, {
+                download: true,
+                header: true,
+                complete: function (results) {
+                    let tableBody = document.querySelector("#revenueTable tbody");
+                    results.data.forEach(row => {
+                        let tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td>${row["Account"] || ""}</td>
+                            <td>${row["FY23 Actual"] || ""}</td>
+                            <td>${row["FY24 Actual"] || ""}</td>
+                            <td>${row["FY25 Budget"] || ""}</td>
+                            <td>${row["FY26 Proposed"] || ""}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
