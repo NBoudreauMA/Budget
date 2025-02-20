@@ -22,17 +22,26 @@
     </header>
 
     <main>
-        <section>
+        <section class="intro">
             <h2>Expenditures Overview</h2>
             <p>A detailed breakdown of expenditures for the Town of Hubbardston.</p>
+            <input type="text" id="searchBar" placeholder="Search by department or item..." onkeyup="filterTable()">
         </section>
 
-        <!-- ✅ Ensure the container exists -->
         <div id="expenditureContainer"></div>
     </main>
 
     <footer>
         <p>&copy; 2025 Town of Hubbardston - Budget Dashboard</p>
     </footer>
+
+    <script>
+        function filterTable() {
+            const input = document.getElementById("searchBar").value.toLowerCase();
+            document.querySelectorAll(".expenditure-table tbody tr").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
+            });
+        }
+    </script>
 </body>
 </html>
