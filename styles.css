@@ -1,7 +1,7 @@
-/* General Styling */
+/* Restore original styling */
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Arial', sans-serif;
+    background: #e5e5e5;
     margin: 0;
     padding: 0;
 }
@@ -10,74 +10,57 @@ body {
 .expenditure-table {
     width: 100%;
     border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
-    background: white;
     margin-top: 20px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background: white;
 }
 
-/* Sticky Table Header */
-.expenditure-table thead {
+.expenditure-table th {
     background: #205072;
     color: white;
-    font-weight: bold;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.expenditure-table th,
-.expenditure-table td {
     padding: 12px;
     text-align: left;
+}
+
+.expenditure-table td {
+    padding: 12px;
     border-bottom: 1px solid #ddd;
 }
 
-/* Alternate Row Colors */
+/* Alternating row colors */
 .expenditure-table tbody tr:nth-child(even) {
     background: #f9f9f9;
 }
 
 /* Hover Effect */
 .expenditure-table tbody tr:hover {
-    background: #ddeeff;
-    transition: 0.3s;
+    background: #cce7ff;
 }
 
-/* Buttons for Sorting (if needed later) */
-.sort-button {
-    background: none;
-    border: none;
-    color: white;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-/* Search Bar */
-#searchBox {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* Dropdown Menu */
+#departmentDropdown {
+    display: block;
+    margin: 10px auto;
+    padding: 8px;
     font-size: 16px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 5px;
 }
 
-/* Category Colors */
+/* Category Color Labels */
 .category-label {
     padding: 5px 10px;
     font-size: 14px;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 5px;
     display: inline-block;
 }
 
 /* Assign colors to each major category */
-.category-GENERAL-GOVERNMENT { background: #ffd166; color: #333; }
-.category-PUBLIC-SAFETY { background: #ef476f; color: white; }
-.category-EDUCATION { background: #06d6a0; color: white; }
-.category-PUBLIC-WORKS { background: #118ab2; color: white; }
-.category-HUMAN-SERVICES { background: #073b4c; color: white; }
-.category-DEBT { background: #b56576; color: white; }
-.category-LIABILITIES { background: #6d597a; color: white; }
+.category-GENERAL-GOVERNMENT { background: #ffcc00; color: #333; }
+.category-PUBLIC-SAFETY { background: #ff4444; color: white; }
+.category-EDUCATION { background: #22cc88; color: white; }
+.category-PUBLIC-WORKS { background: #2277cc; color: white; }
+.category-HUMAN-SERVICES { background: #444488; color: white; }
+.category-DEBT { background: #993366; color: white; }
+.category-LIABILITIES { background: #666666; color: white; }
