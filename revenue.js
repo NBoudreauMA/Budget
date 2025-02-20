@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (isNaN(revenueCategories[key])) revenueCategories[key] = 0;
             });
 
-            // Generate Chart
+            // Generate Chart with Fixed Size
             const ctx = revenueChartCanvas.getContext("2d");
             new Chart(ctx, {
                 type: "pie",
@@ -89,6 +89,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 10,
+                            top: 10,
+                            bottom: 10
+                        }
+                    },
                     plugins: {
                         legend: { position: "bottom" },
                         tooltip: { enabled: true }
