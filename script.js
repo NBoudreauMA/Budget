@@ -8,14 +8,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    let generalGovTable = document.querySelector("#generalGovTable tbody");
-    let publicSafetyTable = document.querySelector("#publicSafetyTable tbody");
-    let publicWorksTable = document.querySelector("#publicWorksTable tbody");
     let expenditureChartCanvas = document.getElementById("expenditureChart");
+    let categories = {
+        "General Government": 0,
+        "Public Safety": 0,
+        "Public Works": 0,
+        "Education": 0,
+        "Human Services": 0,
+        "Culture and Recreation": 0,
+        "Debt": 0,
+        "Liabilities and Assessments": 0
+    };
 
-    if (!generalGovTable || !publicSafetyTable || !publicWorksTable || !expenditureChartCanvas) {
-        console.error("One or more expenditure tables are missing in expenditures.html.");
-        return;
+    function formatCurrency(value) {
+        if (!value || value.trim() === "" || isNaN(parseFloat(value.replace(/[$,]/g, "")))) {
+            return "$0.00"; // Default value for missing or invalid numbers
+        }
+        let num = parseFloat(value.replace(/[$,]/g, ""));
+        return `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     Papa.parse(expendituresCSV, {
@@ -30,57 +40,53 @@ document.addEventListener("DOMContentLoaded", function () {
 
             console.log("Expenditures CSV Loaded:", results.data);
 
-            let expenditureCategories = {
-                "General Government": 0,
-                "Public Safety": 0,
-                "Public Works": 0
-            };
+            let expenditureTables = {};
 
-            function formatCurrency(value) {
-                let num = parseFloat(value.replace(/[$,]/g, ""));
-                return isNaN(num) ? "$0.00" : `$${num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-            }
-
-            results.data.forEach(row => {
-                if (!row["Category"]) return;
-
-                let rowHTML = `
-                    <tr>
-                        <td>${row["Category"]}</td>
-                        <td>${row["Item Description"]}</td>
-                        <td>${formatCurrency(row["FY24 Actual"])}</td>
-                        <td>${formatCurrency(row["FY25 Requested"])}</td>
-                        <td>${formatCurrency(row["FY25 Actual"])}</td>
-                        <td>${formatCurrency(row["FY26 Dept"])}</td>
-                        <td>${formatCurrency(row["FY26 Admin"])}</td>
-                        <td>${formatCurrency(row["Change ($)"])}</td>
-                        <td>${row["Change (%)"]}%</td>
-                    </tr>
-                `;
-
-                let fy26Value = formatCurrency(row["FY26 Admin"]).replace(/[$,]/g, "");
-
-                if (row["Category"].includes("General Government")) {
-                    generalGovTable.innerHTML += rowHTML;
-                    expenditureCategories["General Government"] += parseFloat(fy26Value);
-                } else if (row["Category"].includes("Public Safety")) {
-                    publicSafetyTable.innerHTML += rowHTML;
-                    expenditureCategories["Public Safety"] += parseFloat(fy26Value);
-                } else if (row["Category"].includes("Public Works")) {
-                    publicWorksTable.innerHTML += rowHTML;
-                    expenditureCategories["Public Works"] += parseFloat(fy26Value);
+            Object.keys(categories).forEach(category => {
+                let tableId = category.replace(/\s+/g, '') + "Table";
+                expenditureTables[category] = document.querySelector(`#${tableId} tbody`);
+                if (!expenditureTables[category]) {
+                    console.warn(`Table not found for category: ${category}`);
                 }
             });
 
-            // Generate Chart
+            results.data.forEach(row => {
+                if (!row["Category"] || !row["FY26 Admin"]) return;
+
+                let category = row["Category"].trim();
+                let formattedValue = formatCurrency(row["FY26 Admin"]);
+                let fy26Value = parseFloat(formattedValue.replace(/[$,]/g, "")) || 0;
+
+                if (categories.hasOwnProperty(category)) {
+                    categories[category] += fy26Value;
+
+                    let rowHTML = `
+                        <tr>
+                            <td>${row["Account"]}</td>
+                            <td>${formatCurrency(row["FY24 Actual"])}</td>
+                            <td>${formatCurrency(row["FY25 Requested"])}</td>
+                            <td>${formatCurrency(row["FY25 Actual"])}</td>
+                            <td>${formatCurrency(row["FY26 Dept"])}</td>
+                            <td>${formattedValue}</td>
+                            <td>${formatCurrency(row["Change ($)"])}</td>
+                            <td>${row["Change (%)"] || "0%"}%</td>
+                        </tr>
+                    `;
+
+                    if (expenditureTables[category]) {
+                        expenditureTables[category].innerHTML += rowHTML;
+                    }
+                }
+            });
+
             const ctx = expenditureChartCanvas.getContext("2d");
             new Chart(ctx, {
-                type: "doughnut",
+                type: "pie",
                 data: {
-                    labels: Object.keys(expenditureCategories),
+                    labels: Object.keys(categories),
                     datasets: [{
-                        data: Object.values(expenditureCategories),
-                        backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726"],
+                        data: Object.values(categories),
+                        backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726", "#8E44AD", "#3498DB", "#E74C3C", "#27AE60", "#F39C12"],
                         hoverOffset: 6
                     }]
                 },
