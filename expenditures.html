@@ -42,3 +42,35 @@
                 row.style.display = row.innerText.toLowerCase().includes(input) ? "" : "none";
             });
         }
+<div id="navbar-container"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch("navbar.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("navbar-container").innerHTML = data;
+                loadNavFunctionality();
+            })
+            .catch(error => console.error("Error loading navbar:", error));
+    });
+
+    function loadNavFunctionality() {
+        const hamburger = document.querySelector(".hamburger-menu");
+        const navLinks = document.querySelector(".nav-links");
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("nav-active");
+            hamburger.classList.toggle("toggle");
+        });
+
+        window.addEventListener("scroll", function() {
+            const navbar = document.querySelector(".navbar");
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+    }
+</script>
+
