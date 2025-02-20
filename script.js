@@ -1,39 +1,39 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("Revenue script loaded.");
+    console.log("Expenditures script loaded.");
 
-    const revenueCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/revenue_data.csv";
+    const expendituresCSV = "https://raw.githubusercontent.com/NBoudreauMA/Budget/main/expenditures_cleaned.csv";
 
     if (typeof Papa === "undefined") {
         console.error("PapaParse library is missing.");
         return;
     }
 
-    let taxLevyTable = document.querySelector("#taxLevyTable tbody");
-    let stateAidTable = document.querySelector("#stateAidTable tbody");
-    let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
-    let revenueChartCanvas = document.getElementById("revenueChart");
+    let generalGovTable = document.querySelector("#generalGovTable tbody");
+    let publicSafetyTable = document.querySelector("#publicSafetyTable tbody");
+    let publicWorksTable = document.querySelector("#publicWorksTable tbody");
+    let expenditureChartCanvas = document.getElementById("expenditureChart");
 
-    if (!taxLevyTable || !stateAidTable || !localReceiptsTable || !revenueChartCanvas) {
-        console.error("One or more revenue tables are missing in revenue.html.");
+    if (!generalGovTable || !publicSafetyTable || !publicWorksTable || !expenditureChartCanvas) {
+        console.error("One or more expenditure tables are missing in expenditures.html.");
         return;
     }
 
-    Papa.parse(revenueCSV, {
+    Papa.parse(expendituresCSV, {
         download: true,
         header: true,
         skipEmptyLines: true,
         complete: function (results) {
             if (!results.data || results.data.length === 0) {
-                console.error("Revenue CSV is empty.");
+                console.error("Expenditures CSV is empty.");
                 return;
             }
 
-            console.log("Revenue CSV Loaded:", results.data);
+            console.log("Expenditures CSV Loaded:", results.data);
 
-            let revenueCategories = {
-                "Tax Levy": 0,
-                "State Aid": 0,
-                "Local Receipts": 0
+            let expenditureCategories = {
+                "General Government": 0,
+                "Public Safety": 0,
+                "Public Works": 0
             };
 
             function formatCurrency(value) {
@@ -46,36 +46,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 let rowHTML = `
                     <tr>
-                        <td>${row["Account"]}</td>
-                        <td>${formatCurrency(row["FY23 Actual"])}</td>
+                        <td>${row["Category"]}</td>
+                        <td>${row["Item Description"]}</td>
                         <td>${formatCurrency(row["FY24 Actual"])}</td>
-                        <td>${formatCurrency(row["FY25 Budget"])}</td>
-                        <td>${formatCurrency(row["FY26 Proposed"])}</td>
+                        <td>${formatCurrency(row["FY25 Requested"])}</td>
+                        <td>${formatCurrency(row["FY25 Actual"])}</td>
+                        <td>${formatCurrency(row["FY26 Dept"])}</td>
+                        <td>${formatCurrency(row["FY26 Admin"])}</td>
+                        <td>${formatCurrency(row["Change ($)"])}</td>
+                        <td>${row["Change (%)"]}%</td>
                     </tr>
                 `;
 
-                let fy26Value = formatCurrency(row["FY26 Proposed"]).replace(/[$,]/g, "");
+                let fy26Value = formatCurrency(row["FY26 Admin"]).replace(/[$,]/g, "");
 
-                if (row["Category"].includes("Tax Levy")) {
-                    taxLevyTable.innerHTML += rowHTML;
-                    revenueCategories["Tax Levy"] += parseFloat(fy26Value);
-                } else if (row["Category"].includes("State Aid")) {
-                    stateAidTable.innerHTML += rowHTML;
-                    revenueCategories["State Aid"] += parseFloat(fy26Value);
-                } else if (row["Category"].includes("Local Receipts")) {
-                    localReceiptsTable.innerHTML += rowHTML;
-                    revenueCategories["Local Receipts"] += parseFloat(fy26Value);
+                if (row["Category"].includes("General Government")) {
+                    generalGovTable.innerHTML += rowHTML;
+                    expenditureCategories["General Government"] += parseFloat(fy26Value);
+                } else if (row["Category"].includes("Public Safety")) {
+                    publicSafetyTable.innerHTML += rowHTML;
+                    expenditureCategories["Public Safety"] += parseFloat(fy26Value);
+                } else if (row["Category"].includes("Public Works")) {
+                    publicWorksTable.innerHTML += rowHTML;
+                    expenditureCategories["Public Works"] += parseFloat(fy26Value);
                 }
             });
 
             // Generate Chart
-            const ctx = revenueChartCanvas.getContext("2d");
+            const ctx = expenditureChartCanvas.getContext("2d");
             new Chart(ctx, {
                 type: "doughnut",
                 data: {
-                    labels: Object.keys(revenueCategories),
+                    labels: Object.keys(expenditureCategories),
                     datasets: [{
-                        data: Object.values(revenueCategories),
+                        data: Object.values(expenditureCategories),
                         backgroundColor: ["#66BB6A", "#42A5F5", "#FFA726"],
                         hoverOffset: 6
                     }]
@@ -90,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             });
 
-            console.log("Revenue Chart Rendered Successfully");
+            console.log("Expenditure Chart Rendered Successfully");
         }
     });
 });
