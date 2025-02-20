@@ -1,4 +1,140 @@
-/* Revenue specific styles */
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    line-height: 1.6;
+    background: #f4f4f4;
+    color: #333;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(10, 72, 30, 0.9);
+    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Logo */
+.nav-logo img {
+    width: 50px;
+    height: auto;
+}
+
+/* Nav Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    padding: 10px 15px;
+    position: relative;
+    transition: color 0.3s ease-in-out;
+}
+
+/* Animated Underline */
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: #ffcc00;
+    left: 0;
+    bottom: -5px;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-links a:hover::after {
+    transform: scaleX(1);
+}
+
+.nav-links a:hover {
+    color: #ffcc00;
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    min-width: 200px;
+    z-index: 1001;
+}
+
+.dropdown-menu li {
+    margin: 0;
+    list-style: none;
+}
+
+.dropdown-menu a {
+    display: block;
+    color: #0a481e;
+    padding: 10px 15px;
+    text-align: left;
+    transition: background 0.3s ease-in-out;
+    font-size: 16px;
+}
+
+.dropdown-menu a:hover {
+    background: #f4f7f6;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* Main Content */
+.main-content {
+    max-width: 1200px;
+    margin: 80px auto 20px;
+    padding: 0 20px;
+}
+
+/* Revenue Sections */
 .revenue-sections {
     display: flex;
     flex-direction: column;
@@ -20,23 +156,27 @@
     padding-bottom: 0.5rem;
 }
 
-.subtotal {
-    background-color: #f8f9fa;
+/* Table Styles */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
 }
 
-.subtotal td {
-    border-top: 2px solid #dee2e6;
-}
-
-/* Table improvements */
 .data-table th {
     white-space: nowrap;
     position: sticky;
     top: 0;
     background: #165a22;
+    color: white;
+    padding: 12px;
+    text-align: left;
 }
 
 .data-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
     transition: background-color 0.2s;
 }
 
@@ -44,7 +184,17 @@
     background-color: #f5f5f5;
 }
 
-/* Chart container improvements */
+/* Subtotal Rows */
+.subtotal {
+    background-color: #f8f9fa;
+}
+
+.subtotal td {
+    border-top: 2px solid #dee2e6;
+    font-weight: bold;
+}
+
+/* Chart Container */
 .chart-container {
     margin: 2rem auto;
     max-width: 800px;
@@ -54,8 +204,69 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Responsive adjustments */
+/* Mobile Menu */
+.hamburger-menu {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.bar {
+    width: 30px;
+    height: 3px;
+    background: white;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* Footer */
+footer {
+    background: #0a481e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* Utility Classes */
+.text-center { text-align: center; }
+.mb-2 { margin-bottom: 2rem; }
+.mt-2 { margin-top: 2rem; }
+
+/* Mobile Styles */
 @media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #0a481e;
+        padding: 1rem 0;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .dropdown-menu a {
+        color: white;
+        padding-left: 30px;
+    }
+
     .revenue-sections section {
         padding: 1rem;
     }
@@ -67,5 +278,34 @@
     .data-table th,
     .data-table td {
         padding: 0.5rem;
+    }
+
+    .chart-container {
+        padding: 1rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .hamburger-menu {
+        display: none;
+    }
+
+    .main-content {
+        margin-top: 0;
+    }
+
+    .chart-container {
+        break-inside: avoid;
+    }
+
+    .data-table {
+        break-inside: auto;
+    }
+
+    .data-table th {
+        background-color: #ddd !important;
+        color: black !important;
     }
 }
