@@ -6,12 +6,12 @@
     <title>Revenue Breakdown | Hubbardston Budget</title>
     <link rel="stylesheet" href="styles.css">
     
-    <!-- Load dependencies -->
+    <!-- Load PapaParse and Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- Main script -->
-    <script src="script.js" defer></script>
+    <!-- Main Script -->
+    <script src="revenue.js" defer></script>
 </head>
 <body>
     <header>
@@ -19,7 +19,7 @@
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="revenue.html">Revenue</a></li>
+                <li><a href="revenue.html" class="active">Revenue</a></li>
                 <li><a href="expenditures.html">Expenditures</a></li>
                 <li><a href="information.html">Information</a></li>
             </ul>
@@ -28,24 +28,24 @@
 
     <main>
         <h2>Revenue Overview</h2>
-        <p>Below is a detailed breakdown of revenue sources for the Town of Hubbardston.</p>
+        <p>A detailed breakdown of the Town of Hubbardston’s revenue sources.</p>
 
-        <!-- Pie Chart Section -->
+        <!-- Modern Pie Chart -->
         <section class="chart-container">
-            <h3>Revenue Distribution (FY26 Proposed)</h3>
+            <h3>Revenue Distribution (FY26)</h3>
             <div class="chart-wrapper">
                 <canvas id="revenueChart"></canvas>
             </div>
         </section>
 
-        <!-- Revenue Categories with Dropdown -->
+        <!-- Revenue Breakdown Tables -->
         <section class="dropdown-container">
-            <button class="dropdown-toggle">Tax Levy Revenue <span class="info-icon" title="The total amount of property tax the town can legally raise each year.">ℹ️</span></button>
+            <button class="dropdown-toggle">Tax Levy <span class="info-icon" title="Revenue raised through property taxes.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="taxLevyTable">
                     <thead>
                         <tr>
-                            <th>Account</th>
+                            <th>Category</th>
                             <th>FY23 Actual</th>
                             <th>FY24 Actual</th>
                             <th>FY25 Budget</th>
@@ -58,16 +58,16 @@
         </section>
 
         <section class="dropdown-container">
-            <button class="dropdown-toggle">State Aid Revenue <span class="info-icon" title="Funds provided by the state to support local government operations.">ℹ️</span></button>
+            <button class="dropdown-toggle">State Aid <span class="info-icon" title="Funding provided by the state for various programs.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="stateAidTable">
                     <thead>
                         <tr>
-                            <th>Account</th>
-                            <th>FY23 Actual</th>
-                            <th>FY24 Actual</th>
-                            <th>FY25 Budget</th>
-                            <th>FY26 Proposed</th>
+                            <th>Category</th>
+                            <th>FY23</th>
+                            <th>FY24</th>
+                            <th>FY25</th>
+                            <th>FY26</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -76,12 +76,12 @@
         </section>
 
         <section class="dropdown-container">
-            <button class="dropdown-toggle">Local Receipts Revenue <span class="info-icon" title="Revenue from fees, permits, fines, and local services.">ℹ️</span></button>
+            <button class="dropdown-toggle">Local Receipts <span class="info-icon" title="Revenue from local sources such as motor vehicle excise, fees, and fines.">ℹ️</span></button>
             <div class="dropdown-content">
                 <table id="localReceiptsTable">
                     <thead>
                         <tr>
-                            <th>Account</th>
+                            <th>Category</th>
                             <th>FY23 Actual</th>
                             <th>FY24 Actual</th>
                             <th>FY25 Budget</th>
