@@ -38,11 +38,11 @@
             </div>
         </section>
 
-        <!-- Toggle Sections for Revenue Buckets -->
+        <!-- Tax Levy Revenue -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Tax Levy Revenue</button>
             <div class="dropdown-content">
-                <table id="taxTable">
+                <table id="taxLevyTable">
                     <thead>
                         <tr><th>Account</th><th>FY23 Actual</th><th>FY24 Actual</th><th>FY25 Budget</th><th>FY26 Proposed</th></tr>
                     </thead>
@@ -51,6 +51,7 @@
             </div>
         </section>
 
+        <!-- State Aid Revenue -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">State Aid Revenue</button>
             <div class="dropdown-content">
@@ -63,6 +64,7 @@
             </div>
         </section>
 
+        <!-- Local Receipts Revenue -->
         <section class="dropdown-container">
             <button class="dropdown-toggle">Local Receipts Revenue</button>
             <div class="dropdown-content">
@@ -95,7 +97,7 @@
                         return;
                     }
 
-                    let taxTable = document.querySelector("#taxTable tbody");
+                    let taxLevyTable = document.querySelector("#taxLevyTable tbody");
                     let stateAidTable = document.querySelector("#stateAidTable tbody");
                     let localReceiptsTable = document.querySelector("#localReceiptsTable tbody");
 
@@ -121,10 +123,10 @@
 
                         let fy26Value = parseFloat(row["FY26 Proposed"]) || 0;
 
-                        if (row["Account"].includes("Tax Levy") || row["Account"].includes("Prop 2.5%") || row["Account"].includes("New Growth")) {
-                            taxTable.innerHTML += rowHTML;
+                        if (["Tax Levy", "Prop 2.5%", "New Growth / Amended NG", "Debt Exclusions (School Roof)"].includes(row["Account"])) {
+                            taxLevyTable.innerHTML += rowHTML;
                             taxTotal += fy26Value;
-                        } else if (row["Account"].includes("State Aid") || row["Account"].includes("General Government Aid") || row["Account"].includes("Veterans' Benefits")) {
+                        } else if (["Unrestricted General Government Aid", "Abatements to Veterans' and Blind", "State Owned Land", "Veterans' Benefits and Exemptions", "Offsets (Library)"].includes(row["Account"])) {
                             stateAidTable.innerHTML += rowHTML;
                             stateAidTotal += fy26Value;
                         } else {
