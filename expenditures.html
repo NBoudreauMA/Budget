@@ -3,12 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expenditures | Hubbardston Budget</title>
+    <title>Expenditures Breakdown | Hubbardston Budget</title>
     <link rel="stylesheet" href="styles.css">
+    
+    <!-- Load PapaParse and Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Main Script -->
+    <script src="script.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Expenditure Breakdown</h1>
+        <h1>Expenditures Breakdown</h1>
         <nav>
             <ul>
                 <li><a href="index.html">Home</a></li>
@@ -18,12 +25,67 @@
             </ul>
         </nav>
     </header>
+
     <main>
-        <h2>How Funds Are Spent</h2>
-        <p>Here, you'll find details on town expenditures, including personnel costs, infrastructure, and essential services.</p>
+        <h2>Expenditures Overview</h2>
+        <p>Below is a detailed breakdown of expenditures for the Town of Hubbardston.</p>
+
+        <!-- Modern Pie Chart -->
+        <section class="chart-container">
+            <h3>Expenditure Distribution (FY26)</h3>
+            <div class="chart-wrapper">
+                <canvas id="expenditureChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Expenditures Table -->
+        <section class="dropdown-container">
+            <button class="dropdown-toggle">General Government <span class="info-icon" title="Administrative costs including staff, legal, and operational expenses.">ℹ️</span></button>
+            <div class="dropdown-content">
+                <table id="generalGovTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Item Description</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Requested</th>
+                            <th>FY25 Actual</th>
+                            <th>FY26 Dept</th>
+                            <th>FY26 Admin</th>
+                            <th>Change ($)</th>
+                            <th>Change (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="dropdown-container">
+            <button class="dropdown-toggle">Public Safety <span class="info-icon" title="Police, fire, emergency services, and public safety initiatives.">ℹ️</span></button>
+            <div class="dropdown-content">
+                <table id="publicSafetyTable">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Item Description</th>
+                            <th>FY24 Actual</th>
+                            <th>FY25 Requested</th>
+                            <th>FY25 Actual</th>
+                            <th>FY26 Dept</th>
+                            <th>FY26 Admin</th>
+                            <th>Change ($)</th>
+                            <th>Change (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
     </main>
+
     <footer>
-        <p>&copy; 2025 Town of Hubbardston</p>
+        <p>&copy; <span id="yearFooter"></span> Town of Hubbardston</p>
     </footer>
 </body>
 </html>
