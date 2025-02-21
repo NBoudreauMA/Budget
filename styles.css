@@ -1,7 +1,7 @@
 /* Global Styles */
 body {
-    background: url('https://raw.githubusercontent.com/NBoudreauMA/Budget/refs/heads/main/hubbardston_bg.jpg') no-repeat center center fixed;
-    background-size: cover;
+    background: url('https://raw.githubusercontent.com/NBoudreauMA/Budget/refs/heads/main/hubbardston_bg.jpg') no-repeat center center fixed !important;
+    background-size: cover !important;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    background: rgba(30, 91, 36, 0.85); /* Semi-transparent */
+    background: rgba(30, 91, 36, 0.9); /* Slight transparency */
     padding: 0.5rem 1.5rem;
     height: 50px;
     z-index: 1000;
@@ -24,31 +24,9 @@ body {
     border-radius: 0 0 10px 10px;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 18px;
-}
-
-.nav-links a {
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 5px 10px;
-    transition: color 0.3s, transform 0.2s, opacity 0.3s;
-    opacity: 0.9;
-}
-
-.nav-links a:hover {
-    color: #ffd700;
-    opacity: 1;
-    transform: scale(1.05);
-}
-
 /* Hero Section */
 .hero {
-    background: rgba(30, 91, 36, 0.7); /* Increased transparency */
+    background: rgba(30, 91, 36, 0.6); /* More transparent */
     color: white;
     text-align: center;
     padding: 6rem 0;
@@ -56,23 +34,12 @@ body {
     border-radius: 0 0 30px 30px;
 }
 
-.hero h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-}
-
-.hero p {
-    font-size: 1.2rem;
-    font-weight: 300;
-    opacity: 0.95;
-}
-
-/* Dashboard Sections */
+/* Section Containers */
 .dashboard-section {
     width: 90%;
     max-width: 900px;
     margin: 2rem auto;
-    background: rgba(255, 255, 255, 0.6); /* Increased transparency */
+    background: rgba(255, 255, 255, 0.4) !important; /* More transparent */
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 1.5rem;
@@ -80,20 +47,15 @@ body {
 
 /* Revenue Section */
 #revenue {
-    background: rgba(255, 255, 255, 0.5); /* Semi-transparent */
+    background: rgba(255, 255, 255, 0.35) !important; /* Semi-transparent */
     color: #333;
     padding: 20px;
     border-radius: 10px;
 }
 
-#revenue h2 {
-    font-size: 1.5rem;
-    color: #2a7d2e;
-}
-
-/* Toggle Box */
+/* Toggle Buttons */
 .toggle-box {
-    background: rgba(42, 125, 46, 0.8); /* Transparent Green */
+    background: rgba(42, 125, 46, 0.7); /* Transparent Green */
     color: white;
     padding: 1rem;
     cursor: pointer;
@@ -106,68 +68,23 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
-    background: rgba(255, 255, 255, 0.6); /* Slight transparency */
-}
-
-.revenue-table th {
-    background: rgba(42, 125, 46, 0.85); /* Semi-transparent green */
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-.revenue-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.revenue-table tr:nth-child(even) {
-    background: rgba(249, 249, 249, 0.6); /* Lighter transparency */
+    background: rgba(255, 255, 255, 0.3) !important; /* More transparent */
 }
 
 /* Chart Container */
 .chart-container {
     margin-top: 20px;
-    background: rgba(255, 255, 255, 0.6); /* Transparent white */
+    background: rgba(255, 255, 255, 0.2) !important; /* Transparent white */
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Tooltip (Info Bubbles) */
-.tooltip-container {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: 220px;
-    background-color: rgba(255, 255, 255, 0.85);
-    color: #333;
-    text-align: center;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.tooltip-container:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
 }
 
 /* Footer */
 footer {
     text-align: center;
     color: white;
-    background: rgba(30, 91, 36, 0.9);
+    background: rgba(30, 91, 36, 0.8);
     padding: 1rem;
     margin-top: 30px;
 }
