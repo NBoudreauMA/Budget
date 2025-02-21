@@ -17,12 +17,13 @@ body {
     width: 100%;
     background: rgba(30, 91, 36, 0.9); /* Slight transparency */
     padding: 0.5rem 1.5rem;
-    height: 50px;
+    height: 60px;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
     border-radius: 0 0 10px 10px;
 }
 
+/* Navbar Links */
 .nav-links {
     list-style: none;
     display: flex;
@@ -33,7 +34,7 @@ body {
     text-decoration: none;
     color: white;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     padding: 5px 10px;
     transition: color 0.3s, transform 0.2s, opacity 0.3s;
     opacity: 0.9;
@@ -45,13 +46,46 @@ body {
     transform: scale(1.05);
 }
 
+/* Mobile Menu */
+.menu-toggle {
+    display: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+}
+
+@media screen and (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgba(30, 91, 36, 0.95);
+        width: 100%;
+        padding: 10px 0;
+        text-align: center;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+}
+
 /* Hero Section - Background Image Behind Green */
 .hero {
     position: relative;
     color: white;
     text-align: center;
     padding: 6rem 0;
-    margin-top: 50px;
+    margin-top: 60px;
     border-radius: 0 0 30px 30px;
     overflow: hidden; /* Ensures child elements do not spill over */
 }
@@ -75,80 +109,11 @@ body {
     z-index: 1; /* Ensures text is above the background */
 }
 
-/* Section Containers */
-.dashboard-section {
-    width: 90%;
-    max-width: 900px;
-    margin: 2rem auto;
-    background: rgba(255, 255, 255, 0.85); /* Semi-transparent */
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 1.5rem;
-}
-
-/* Revenue Section */
-#revenue {
-    background: rgba(255, 255, 255, 0.85);
-    color: #333;
-    padding: 20px;
-    border-radius: 10px;
-}
-
-/* Toggle Buttons */
-.toggle-box {
-    background: rgba(42, 125, 46, 0.8); /* Transparent Green */
-    color: white;
-    padding: 1rem;
-    cursor: pointer;
-    border-radius: 8px;
-    font-weight: bold;
-}
-
-/* Revenue Table */
-.revenue-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: rgba(255, 255, 255, 0.85);
-}
-
-.revenue-table th {
-    background: rgba(42, 125, 46, 0.9);
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-.revenue-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-.revenue-table tr:nth-child(even) {
-    background: rgba(249, 249, 249, 0.8);
-}
-
-/* Chart Container */
-.chart-container {
-    margin-top: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Tooltip (Info Bubbles) */
-.tooltip-container {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: 220px;
-    background-color: rgba(255, 255, 255, 0.85);
-    color: #333;
+/* Footer */
+footer {
     text-align: center;
-    padding: 10px;
-    border-radius: 6px;
-    box-shadow: 0px 4px 6px rgba(0
+    color: white;
+    background: rgba(30, 91, 36, 0.9);
+    padding: 1rem;
+    margin-top: 30px;
+}
