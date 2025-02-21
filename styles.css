@@ -1,204 +1,180 @@
-/* Reset and Base Styles */
-* {
+/* Global Styles */
+body {
+    background: url('https://raw.githubusercontent.com/NBoudreauMA/Budget/refs/heads/main/hubbardston_bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #f4f4f4;
     color: #333;
-    line-height: 1.6;
 }
 
-/* Navigation */
+/* Navbar */
 .navbar {
-    background: #165a22;
-    padding: 1rem;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-}
-
-.navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(30, 91, 36, 0.95);
+    padding: 0.5rem 1.5rem;
+    height: 50px;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    border-radius: 0 0 10px 10px;
 }
 
 .nav-links {
+    list-style: none;
     display: flex;
-    gap: 2rem;
+    gap: 18px;
 }
 
-.nav-logo img {
-    height: 40px;
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 5px 10px;
+    transition: color 0.3s, transform 0.2s, opacity 0.3s;
+    opacity: 0.9;
 }
 
-/* Dropdown Styles */
-.departments-link {
-    position: relative;
+.nav-links a:hover {
+    color: #ffd700;
+    opacity: 1;
+    transform: scale(1.05);
 }
 
-/* Main Content */
-.main-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-}
-
-h1 {
+/* Hero Section */
+.hero {
+    background: rgba(30, 91, 36, 0.8);
+    color: white;
     text-align: center;
+    padding: 6rem 0;
+    margin-top: 50px;
+    border-radius: 0 0 30px 30px;
+}
+
+.hero h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    font-weight: 300;
+    opacity: 0.95;
+}
+
+/* Dashboard Sections */
+.dashboard-section {
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+}
+
+/* Revenue Section */
+#revenue {
+    background: rgba(255, 255, 255, 0.85);
     color: #333;
-    margin-bottom: 2rem;
-    font-size: 2rem;
+    padding: 20px;
+    border-radius: 10px;
 }
 
-/* Filters */
-.filters {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
+#revenue h2 {
+    font-size: 1.5rem;
+    color: #2a7d2e;
 }
 
-.filters select {
-    padding: 0.5rem;
+/* Toggle Box */
+.toggle-box {
+    background: #2a7d2e;
+    color: white;
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.toggle-content {
+    display: none;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Revenue Table */
+.revenue-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.revenue-table th {
+    background: #2a7d2e;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.revenue-table td {
     border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+    padding: 8px;
+}
+
+.revenue-table tr:nth-child(even) {
+    background: #f9f9f9;
 }
 
 /* Chart Container */
 .chart-container {
+    margin-top: 20px;
     background: white;
-    border-radius: 8px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    height: 400px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Total Budget Display */
-.total-budget {
-    text-align: center;
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin: 2rem 0;
+/* Tooltip (Info Bubbles) */
+.tooltip-container {
+    position: relative;
+    display: inline-block;
 }
 
-/* Department Sections */
-.department-sections section {
-    margin-bottom: 2rem;
-}
-
-.department-sections h2 {
+.tooltip-text {
+    visibility: hidden;
+    width: 220px;
+    background-color: #fff;
     color: #333;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.15);
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
-/* Data Tables */
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background: white;
-}
-
-.data-table th,
-.data-table td {
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-.data-table th {
-    background: #165a22;
-    color: white;
-}
-
-.data-table tr:nth-child(even) {
-    background: #f9f9f9;
-}
-
-.data-table tr:hover {
-    background: #f5f5f5;
-}
-
-.total-row {
-    background: #f0f0f0 !important;
-}
-
-.total-row td {
-    border-top: 2px solid #ddd;
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }
 
 /* Footer */
 footer {
-    background: #165a22;
-    color: white;
     text-align: center;
+    color: white;
+    background: rgba(30, 91, 36, 0.95);
     padding: 1rem;
-    margin-top: 2rem;
-}
-
-/* Revenue Specific Styles */
-.revenue-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-.revenue-sections section {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.revenue-sections h2 {
-    color: #165a22;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 0.5rem;
-}
-
-/* Expenditure Specific Styles */
-.expenditure-sections section {
-    background: white;
-    border-radius: 8px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-
-/* Utility Classes */
-.text-center { text-align: center; }
-.mb-2 { margin-bottom: 2rem; }
-.mt-2 { margin-top: 2rem; }
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-    
-    .filters {
-        flex-direction: column;
-    }
-    
-    .main-content {
-        padding: 1rem;
-    }
-    
-    .data-table {
-        font-size: 14px;
-    }
-    
-    .data-table th,
-    .data-table td {
-        padding: 0.5rem;
-    }
+    margin-top: 30px;
 }
