@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,46 +13,112 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="revenue.js" defer></script>
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            background-color: #2d6a4f;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        .navbar ul li {
+            margin: 0 20px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 10px 15px;
+            display: inline-block;
+        }
+
+        .navbar ul li a:hover, .navbar ul li a.active {
+            background-color: #1b4633;
+            border-radius: 8px;
+        }
+
+        .chart-container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <a href="index.html">
-                    <img src="hubbardston_logo.png" alt="Town of Hubbardston">
-                </a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="revenue.html" class="active">Revenue</a></li>
-                <li><a href="expenditures.html">Expenditures</a></li>
-                <li><a href="information.html">Information</a></li>
-                <li class="dropdown">
-                    <a href="#">Departments ▼</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="expenditures.html?dept=general">General Government</a></li>
-                        <li><a href="expenditures.html?dept=safety">Public Safety</a></li>
-                        <li><a href="expenditures.html?dept=publicworks">Public Works</a></li>
-                        <li><a href="expenditures.html?dept=education">Education</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <div class="hamburger-menu">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </div>
-    </nav>
 
-    <main class="main-content">
-        <h1 class="text-center mb-2">Revenue Sources</h1>
+    <header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="revenue_final.html" class="active">Revenue</a></li>
+                <li><a href="expenditures_final_adjusted.html">Expenditures</a></li>
+                <li><a href="capital_plan.html">Capital Plan</a></li>
+                <li><a href="citizens_guide.html">Citizen's Guide</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="text-center">Revenue Sources</h1>
         
-        <div class="chart-container" style="height: 400px;">
+        <div class="chart-container">
             <canvas id="revenueChart"></canvas>
         </div>
 
-        <section id="grandTotal" class="text-center mb-2"></section>
+        <section id="grandTotal" class="text-center"></section>
 
         <div class="revenue-sections">
             <section id="taxes-section">
@@ -105,10 +172,44 @@
                 </table>
             </section>
         </div>
-    </main>
+    </div>
 
     <footer>
         <p>&copy; 2025 Town of Hubbardston</p>
     </footer>
+
+    <script>
+        async function loadRevenueData() {
+            const response = await fetch('revenue.csv');
+            const data = await response.text();
+
+            const rows = data.split("\n").map(row => row.split(","));
+            const headers = rows[0];
+
+            const taxTable = document.getElementById("taxesTable").getElementsByTagName("tbody")[0];
+            const stateAidTable = document.getElementById("stateAidTable").getElementsByTagName("tbody")[0];
+            const localReceiptsTable = document.getElementById("localReceiptsTable").getElementsByTagName("tbody")[0];
+
+            for (let i = 1; i < rows.length; i++) {
+                let row = rows[i];
+                if (row.length === headers.length) {
+                    let category = row[0].trim();
+
+                    let tr = `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`;
+
+                    if (category.includes("Tax")) {
+                        taxTable.innerHTML += tr;
+                    } else if (category.includes("State Aid")) {
+                        stateAidTable.innerHTML += tr;
+                    } else {
+                        localReceiptsTable.innerHTML += tr;
+                    }
+                }
+            }
+        }
+
+        window.onload = loadRevenueData;
+    </script>
+
 </body>
 </html>
